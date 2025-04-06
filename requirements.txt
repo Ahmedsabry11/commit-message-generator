@@ -1,0 +1,6 @@
+openai
+python-dotenv
+requests
+langchain
+tiktoken # for token counting
+
