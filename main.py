@@ -1,6 +1,6 @@
 from models.openai import generate_commit_message
 from prompts.prompt import PROMPTS
-from data.samples import GIT_DIFF
+from dataset.samples import GIT_DIFF
 
 if __name__ == "__main__":
     for name, template in PROMPTS.items():

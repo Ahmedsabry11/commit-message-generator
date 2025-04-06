@@ -3,3 +3,4 @@ PROMPTS = {
     "conventional": "Write a Conventional Commit message (e.g., feat:, fix:) for:\n\n{diff}",
     "imperative": "Describe the following change using an imperative tone:\n\n{diff}",
 }
+

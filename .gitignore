@@ -3,6 +3,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# dataset
+dataset/csharp
+dataset/java
+dataset/javascript
+dataset/python
+dataset/process.py
+dataset/run.sh
+dataset/util.py
+dataset/commitbench.csv
+
 # C extensions
 *.so
 
