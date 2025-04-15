@@ -3,4 +3,4 @@ python-dotenv
 requests
 langchain
 tiktoken # for token counting
-
+google-genai==1.5.0

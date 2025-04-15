@@ -1,23 +1,37 @@
+from openai import OpenAI
 import os
-import openai
 from dotenv import load_dotenv
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
-class OpenAIClient:
-    def __init__(self, model="gpt-3.5-turbo"):
+class GeminiClient:
+    def __init__(self, model="gemini-2.0-flash"):
+        self.api_key = os.getenv("GOOGLE_API_KEY")
+        if not self.api_key:
+            raise ValueError("API key not found. Please set the GOOGLE_API_KEY environment variable.")
+        
+        self.base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+        self.client = OpenAI(
+            api_key=self.api_key,
+            base_url=self.base_url
+        )
         self.model = model
-
+    
     def generate_commit_message(self,diff, prompt_template):
         prompt = prompt_template.format(diff=diff)
-        messages = [{"role": "user", "content": prompt}]
-        response = openai.ChatCompletion.create(
+        # Create a chat completion request
+        response = self.client.chat.completions.create(
             model=self.model,
-            messages=messages,
             n=1,
-            temperature=0.3
+            messages=[
+                {"role": "system", "content": "You are commit message generator."},
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
         )
+
         # Check for errors in the response
         if 'error' in response:
             raise Exception(f"Error from OpenAI API: {response['error']}")

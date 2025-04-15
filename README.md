@@ -11,10 +11,11 @@ commit-message-generator/
 ├── main.py                   # Entry point for testing prompts
 ├── prompts/prompt.py         # Prompt engineering templates
 ├── models/openai.py    ``````# GPT-3.5/4 API wrapper
+├── models/gemini.py    ``````# Gemini models API wrapper
 ├── dataset/sample.py         # Sample diffs or dataset access
 ├── dataset/commitbench.csv   # csv of commitbench dataset
 ├── evaluation/scorer.py      # Evaluation metrics (optional)
-├── .env                      # OpenAI API key
+├── .env                      # OpenAI/Gemnini API keys
 ├── requirements.txt
 └── README.md
 ```
@@ -42,6 +43,7 @@ Create a `.env` file in the root directory:
 
 ```env
 OPENAI_API_KEY=your-openai-api-key-here
+GOOGLE_API_KEY=your-google-api-key-here
 ```
 ---
 
