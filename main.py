@@ -17,5 +17,6 @@ if __name__ == "__main__":
         # print(message)
         print("\n--- Gemini ---")
         message = gemini_client.generate_commit_message(GIT_DIFF, template)
+        print("--- commit message using Gemini ---")
         print(message)
         break
