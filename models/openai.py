@@ -1,41 +1,33 @@
 import os
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class OpenAIClient:
     def __init__(self, model="gpt-3.5-turbo"):
         self.model = model
+        self.client = OpenAI()
 
-    def generate_commit_message(self,diff, prompt_template):
+    def generate_commit_message(self, diff, prompt_template):
         prompt = prompt_template.format(diff=diff)
-        messages = [{"role": "user", "content": prompt}]
-        response = openai.ChatCompletion.create(
-            model=self.model,
-            messages=messages,
-            n=1,
-            temperature=0.3
-        )
-        # Check for errors in the response
-        if 'error' in response:
-            raise Exception(f"Error from OpenAI API: {response['error']}")
-        
-        # print all keys in the response and corresponding values
-        for key, value in response.items():
-            print(f"{key}: {value}")
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a commit message generator."},
+                    {"role": "user", "content": prompt}
+                ],
+                n=1,
+                temperature=0.3
+            )
 
-        # Check if 'choices' is in the response and has at least one choice
-        if 'choices' not in response or len(response['choices']) == 0:
-            raise Exception("No choices returned from OpenAI API.")
-        
-        # Check if 'message' is in the first choice and has 'content'
-        if 'message' not in response['choices'][0] or 'content' not in response['choices'][0]['message']:
-            raise Exception("No message content returned from OpenAI API.")
+            # Print the structured response for debugging
+            print("Full response:", response)
+            print("\n\n")
+            
+            # Extract and return the commit message content
+            return response.choices[0].message.content.strip()
 
-        # Return the content of the first choice's message, stripped of leading/trailing whitespace
-        # and ensure it's a string
-        print(f"Response: {response['choices'][0]['message']['content']}")
-        
-        return response['choices'][0]['message']['content'].strip()
+        except Exception as e:
+            raise Exception(f"Failed to generate commit message: {e}")

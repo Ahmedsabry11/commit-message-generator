@@ -16,6 +16,7 @@ print(f"Number of columns: {df.shape[1]}")
 # print header of the dataset
 print(df.head())
 
+print(df.columns)
 
 # print data of certain columnn in a sample of one row
 print(df.iloc[0]['diff'])

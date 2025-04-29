@@ -12,6 +12,7 @@ dataset/process.py
 dataset/run.sh
 dataset/util.py
 dataset/commitbench.csv
+dataset/*.csv
 
 # C extensions
 *.so
