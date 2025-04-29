@@ -5,4 +5,6 @@ langchain
 tiktoken # for token counting
 google-generative-ai # for Google Gemini API
 evaluate
+rouge_score
+bert-score
 
