@@ -6,3 +6,6 @@ tiktoken # for token counting
 google-generative-ai # for Google Gemini API
 evaluate
 
+pandas
+matplotlib
+seaborn
