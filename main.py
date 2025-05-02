@@ -112,6 +112,31 @@ def run_gemini_inference_on_dataset(dataset_path,output_path,model):
     print(f"Results saved to {output_path}")
 
 if __name__ == "__main__":
+    # ###################################################################################################################
+    # ######################################################## Java #####################################################
+    # ###################################################################################################################
+    # # Java
+    # print("Running inference on the java dataset...")
+    
+
+    # #  Test(1) Java vs OpenAI gpt-3.5-turbo
+    # dataset_path = 'dataset/samples/java.csv'
+    # open_ai_model = 'gpt-3.5-turbo'
+    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{open_ai_model}.csv"
+    
+    # # Run inference on the dataset
+    # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    
+    # #  Test(2) Java vs Gemini 2.0 Flash
+    # dataset_path = 'dataset/samples/java.csv'
+    # gemini_model = 'gemini-2.0-flash'
+    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{gemini_model}.csv"
+
+    # # Run inference on the dataset
+    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+
+
+
     ###################################################################################################################
     ######################################################## Java #####################################################
     ###################################################################################################################
@@ -127,10 +152,10 @@ if __name__ == "__main__":
     # Run inference on the dataset
     run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
     
-    # #  Test(2) Java vs Gemini 2.0 Flash
-    # dataset_path = 'dataset/samples/java.csv'
-    # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{gemini_model}.csv"
+    #  Test(2) Java vs Gemini 2.0 Flash
+    dataset_path = 'dataset/samples/java.csv'
+    gemini_model = 'gemini-2.0-flash'
+    output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{gemini_model}.csv"
 
-    # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+    # Run inference on the dataset
+    run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)

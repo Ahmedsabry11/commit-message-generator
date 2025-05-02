@@ -21,7 +21,8 @@ class GeminiClient:
         prompt = prompt_template.format(diff=diff)
 
         try:
-            return "Gemini client is not available."
+            # # Mocked response for testing purposes
+            # return "Gemini client is not available."
             # Create a chat completion request
             response = self.client.chat.completions.create(
                 model=self.model,
