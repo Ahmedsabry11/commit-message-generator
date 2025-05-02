@@ -6,3 +6,9 @@ PROMPTS = {
     "detailed": "Provide a detailed commit message for the following diff, explaining the changes made:\n\n{diff} \n\n give just commit message",
 }
 
+
+RAG_PROMPTS = (
+    "Here is a new code diff:\n\n{diff}\n\n"
+    "And here are some similar past diffs and their commit messages:\n\n{context}\n\n"
+    "Write a concise and clear commit message for the new diff."
+)
