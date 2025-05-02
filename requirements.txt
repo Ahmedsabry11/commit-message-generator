@@ -11,3 +11,6 @@ faiss-cpu
 langchain 
 openai 
 tiktoken
+pandas
+matplotlib
+seaborn

@@ -1,0 +1,751 @@
+hash,diff,message,project,split,diff_languages
+aaa9a3152bf1aa9098167f9c013581439b484df6,"diff --git a/lib/util/index.js b/lib/util/index.js
+index <HASH>..<HASH> 100644
+--- a/lib/util/index.js
++++ b/lib/util/index.js
+@@ -843,7 +843,7 @@ function readRuleList(rule, callback, isJson) {
+   }
+   var len = rule.list && rule.list.length;
+   var isBin = protoMgr.isBinProtocol(rule.name);
+-  var readFile = fm[(isBin || isJson) ? 'readFile' : 'readFileText'];
++  var readFile = fm[(isBin && !isJson) ? 'readFile' : 'readFileText'];
+   if (!len) {
+     return readRuleValue(rule, readFile, isJson ? function(value) {
+       callback(parseJSON(value));",feat: support matching multiple rules with the same name,avwo_whistle,train,js
+4a828c93d40eb67b2041b08bbed0f1973442bd03,"diff --git a/src/event.js b/src/event.js
+index <HASH>..<HASH> 100644
+--- a/src/event.js
++++ b/src/event.js
+@@ -652,13 +652,15 @@ var withinElement = function( event ) {
+ 
+ 	// Firefox sometimes assigns relatedTarget a XUL element
+ 	// which we cannot access the parentNode property of
++	// Chrome does something similar, the parentNode property
++	// can be accessed but is null.
+ 	try {
+ 		// Traverse up the tree
+ 		while ( parent && parent !== this ) {
+ 			parent = parent.parentNode;
+ 		}
+ 
+-		if ( parent !== this ) {
++		if ( parent && parent !== this ) {
+ 			// set the correct event type
+ 			event.type = event.data;","Make sure that mousing over Chrome ""internal div"" elements results in no trigger of a mouseleave. Fixes #<I>.",jquery_jquery,train,js
+e4074ced6c9a008da5dcd91a511a487fffc71668,"diff --git a/packages/toolkit/bin/index.js b/packages/toolkit/bin/index.js
+index <HASH>..<HASH> 100755
+--- a/packages/toolkit/bin/index.js
++++ b/packages/toolkit/bin/index.js
+@@ -13,7 +13,7 @@ process.on('unhandledRejection', err => {
+ });
+ 
+ var chalk = require('chalk');
+-const packageJson = require('../package.json');
++var packageJson = require('../package.json');
+ 
+ var currentNodeVersion = process.versions.node;
+ var semver = currentNodeVersion.split('.');
+@@ -30,7 +30,7 @@ if (major < 8) {
+   process.exit(1);
+ }
+ 
+-const main = require('../src');
++var main = require('../src');
+ 
+ main(process).catch(error => {
+   console.error(error);",fix(toolkit): rename const to var,carbon-design-system_toolkit,train,js
+2e06e39d4132d277a0fa846888ac65a205ab0f4a,"diff --git a/lib/fields/api.js b/lib/fields/api.js
+index <HASH>..<HASH> 100644
+--- a/lib/fields/api.js
++++ b/lib/fields/api.js
+@@ -112,7 +112,7 @@ ApiField = new Class({
+ 		} else if ( name && name in obj ){
+ 			return cb && cb( null, obj[ name ] );
+ 		}else if( this.options.hasOwnProperty( 'default' ) ){
+-			return cb && cb( null, isFunction( this.default ) ? this.default( obj ) : this.default );
++			return cb && cb( null, isFunction( this.default ) ? this.default( bundle.data ) : this.default );
+ 		} else if( this.options.nullable ){
+ 			return cb && cb( null, null );
+ 		} else {","set bundle.data during hydration to default functions
+
+object is the thing being populated. we want to use
+the raw data",node-tastypie_tastypie,test,js
+3eb9b5e9d760e84d279898a6226d1bcf537bf488,"diff --git a/web/ui/src/app.js b/web/ui/src/app.js
+index <HASH>..<HASH> 100644
+--- a/web/ui/src/app.js
++++ b/web/ui/src/app.js
+@@ -73,7 +73,7 @@ controlplane.
+         });
+         $translateProvider.preferredLanguage('en_US');
+         $translateProvider.fallbackLanguage('en_US');
+-        $translateProvider.useSanitizeValueStrategy('sanitize');
++        $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+     }]).
+     config(['CacheFactoryProvider', function(CacheFactoryProvider){
+         angular.extend(CacheFactoryProvider.defaults, {",Fix translations using words with diacritics and diaresis,control-center_serviced,train,js
+528882be538a1c7ffc8888ad414f2da505d3401f,"diff --git a/Tone/source/UserMedia.js b/Tone/source/UserMedia.js
+index <HASH>..<HASH> 100644
+--- a/Tone/source/UserMedia.js
++++ b/Tone/source/UserMedia.js
+@@ -109,11 +109,13 @@ define([""Tone/core/Tone"", ""Tone/component/Volume"", ""Tone/core/AudioNode""], funct
+ 			//do getUserMedia
+ 			var constraints = {
+ 				audio : {
+-					""deviceId"" : device.deviceId,
+ 					""echoCancellation"" : false,
+ 					""sampleRate"" : this.context.sampleRate
+ 				}
+ 			};
++			if (device){
++				constraints.audio.deviceId = device.deviceId;				
++			}
+ 			return navigator.mediaDevices.getUserMedia(constraints).then(function(stream){
+ 				//start a new source only if the previous one is closed
+ 				if (!this._stream){",does not require device and deviceId in gUM,Tonejs_Tone.js,test,js
+36f13482c58c81dc1669583696c10cebf5c53a2d,"diff --git a/mode/stex/stex.js b/mode/stex/stex.js
+index <HASH>..<HASH> 100644
+--- a/mode/stex/stex.js
++++ b/mode/stex/stex.js
+@@ -103,7 +103,7 @@
+       // Do we look like '\command' ?  If so, attempt to apply the plugin 'command'
+       if (source.match(/^\\[a-zA-Z@]+/)) {
+         var cmdName = source.current().slice(1);
+-        plug = plugins[cmdName] || plugins[""DEFAULT""];
++        plug = plugins.hasOwnProperty(cmdName) ? plugins[cmdName] : plugins[""DEFAULT""];
+         plug = new plug();
+         pushCommand(state, plug);
+         setState(state, beginParams);",[sTeX mode] Ensured that tag does not clash with object prototype properties,codemirror_CodeMirror,train,js
+e92f7db651917425a0f493a98e6b3dbd7008a131,"diff --git a/NavigationSample/Scripts/navigation.mvc.js b/NavigationSample/Scripts/navigation.mvc.js
+index <HASH>..<HASH> 100644
+--- a/NavigationSample/Scripts/navigation.mvc.js
++++ b/NavigationSample/Scripts/navigation.mvc.js
+@@ -177,7 +177,7 @@
+             if (path) {
+
+                 for (var i = 0; i < path.length - 1; i++) {
+
+                     var resp = cache[path[i] + '&' + path[i + 1]];
+
+-                    handleRespone(null, resp);
+
++                    handleRespone({}, resp);
+
+                 }
+
+             } else
+
+                 refreshAjax(newLink, null, false, null, e.state);",Better to have an empty request instead of null. Easier for consumer of api,grahammendick_navigation,train,js
+b7a8bdc86423e72c7b458b8e2425cc4088266b51,"diff --git a/node_modules_build/kwf-webpack/config/webpack.kwf.config.js b/node_modules_build/kwf-webpack/config/webpack.kwf.config.js
+index <HASH>..<HASH> 100644
+--- a/node_modules_build/kwf-webpack/config/webpack.kwf.config.js
++++ b/node_modules_build/kwf-webpack/config/webpack.kwf.config.js
+@@ -102,7 +102,7 @@ module.exports = {
+             }
+         },{
+             enforce: 'post',
+-            test: /\.(s?css|underscore\.tpl|jsx?)$/,
++            test: /\.(s?css|underscore\.tpl|jsx?|tsx?)$/,
+             loader: path.resolve(__dirname, ""../loader/kwfup-loader"")+""?uniquePrefix=""+uniquePrefix,
+         },{
+             enforce: 'post',",use kwfUp loader also for typescript files (ts|tsx),koala-framework_koala-framework,train,js
+c53ab23fc63df5ce01012744f5abc1ed1fbf6ad0,"diff --git a/media/boom/js/boom/tagAutocompleter.js b/media/boom/js/boom/tagAutocompleter.js
+index <HASH>..<HASH> 100644
+--- a/media/boom/js/boom/tagAutocompleter.js
++++ b/media/boom/js/boom/tagAutocompleter.js
+@@ -35,8 +35,8 @@ $.widget('boom.tagAutocompleter', {
+ 			// Add a tag when the enter key is pressed.
+ 			// This allows us to add a tag which doesn't already exist.
+ 			if (e.which == 13) {
+-				self._tagSelected($(this).val(), -1);
+-				$(this).val('');
++				self._tagSelected(self.element.val(), -1);
++				self.element.val('');
+ 			}
+ 		});
+ 	},",Removed unnecessary calls to jQuery() in tagAutocompleter,boomcms_boom-core,train,js
+f9b6bbfbe772f73188f67f03e376a112a2448d13,"diff --git a/lib/rules/no-sibling-hooks.js b/lib/rules/no-sibling-hooks.js
+index <HASH>..<HASH> 100644
+--- a/lib/rules/no-sibling-hooks.js
++++ b/lib/rules/no-sibling-hooks.js
+@@ -20,7 +20,8 @@ function isDescribe(node) {
+   return node
+       && node.type === 'CallExpression'
+       && (isDescribeIdentifier(node.callee)
+-          || node.callee.type === 'MemberExpression' && isDescribeIdentifier(node.callee.object)
++          // eslint-disable-next-line no-extra-parens
++          || (node.callee.type === 'MemberExpression' && isDescribeIdentifier(node.callee.object))
+       );
+ }",Prevent potential error with logical operator mixing,lo1tuma_eslint-plugin-mocha,train,js
+5f7a595f0a74a93a59d15f5297f5409b8cb0d064,"diff --git a/lib/browser/objects-registry.js b/lib/browser/objects-registry.js
+index <HASH>..<HASH> 100644
+--- a/lib/browser/objects-registry.js
++++ b/lib/browser/objects-registry.js
+@@ -87,6 +87,7 @@ class ObjectsRegistry {
+ 
+   // Private: Dereference the object from store.
+   dereference (id) {
++    // FIXME(MarshallOfSound): We should remove this once remote deref works well
+     if (process.env.ELECTRON_DISABLE_REMOTE_DEREFERENCING) return
+ 
+     let pointer = this.storage[id]",chore: add FIXME for remote deref (#<I>),electron_electron,train,js
+a48fcae8c53ada9670e6a5f876d0121edf812eb3,"diff --git a/shared/class.js b/shared/class.js
+index <HASH>..<HASH> 100644
+--- a/shared/class.js
++++ b/shared/class.js
+@@ -183,6 +183,7 @@ class Node extends D3Object {
+                 this.sites = [];
+                 let siteData = {};
+                 siteData.site_name = null;
++	        siteData.site_type = ""port"";
+                 siteData.site_links = [];
+                 siteData.site_states = [];
+                 let site = new Site(siteData,this);
+@@ -478,7 +479,7 @@ class DataStorage {
+ 
+         // Compute a map from name to node.
+         nodes.forEach(function(d) {
+-            console.log(d);
++            //console.log(d);
+             map[d.data.name] = d;
+         });",Fix contact-map rendering of agents with no sites,Kappa-Dev_KaSim,train,js
+b02c63a4a5b7acc888b7c27fdcfb1d1ad2a3d387,"diff --git a/buildutils/logger-loader.js b/buildutils/logger-loader.js
+index <HASH>..<HASH> 100644
+--- a/buildutils/logger-loader.js
++++ b/buildutils/logger-loader.js
+@@ -36,9 +36,12 @@ var loggerSpec = function(fullMatch, optString){
+ }
+ 
+ var getName = function(fn, opts){
++	var slashPattern = isWindows
++		?/\\/g
++		:/\//g
+ 	var name = fn.substring(BASE_PATH.length, fn.length)
+ 		.replace(/\.jsx?$/, '')
+-		.replace(/\//g,'.')
++		.replace(slashPattern,'.')
+ 	if (opts.label)
+ 		name += '.'+opts.label
+ 	return name;",More fixing build on windows :p,redfin_react-server,test,js
+fd9d8c2d811cf207ef5c8de1436c4e38af16deb5,"diff --git a/src/index.js b/src/index.js
+index <HASH>..<HASH> 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -1,6 +1,6 @@
+-export * as core from './core'
+-export * as html from './html'
+-export * as components from './components'
+-export * as layout from './layout'
++export * from './core'
++export * from './html'
++export * from './components'
++export * from './layout'
+ 
+ export const version = '21.0.6'",flatten the exports. flattens the global object when using the global/window version of the lib,trusktr_infamous,train,js
+9938f16f911ad69b5f45ea4893ea07c9d29db8c2,"diff --git a/index.js b/index.js
+index <HASH>..<HASH> 100644
+--- a/index.js
++++ b/index.js
+@@ -118,7 +118,7 @@ HyperTrie.prototype._ready = function (cb) {
+     self.feed.append(Header.encode({
+       type: 'hypertrie',
+       metadata: self.metadata,
+-      subtype: this.subtype
++      subtype: self.subtype
+     }), done)
+ 
+     function done (err) {",Patch wrong 'this' usage (#<I>),mafintosh_hypertrie,train,js
+863734aba46c5e0d04fbc83d2ed314726bddcbc2,"diff --git a/src/managers/GuildMemberManager.js b/src/managers/GuildMemberManager.js
+index <HASH>..<HASH> 100644
+--- a/src/managers/GuildMemberManager.js
++++ b/src/managers/GuildMemberManager.js
+@@ -210,6 +210,7 @@ class GuildMemberManager extends BaseManager {
+    *   .catch(console.error);
+    */
+   ban(user, options = { days: 0 }) {
++    if (typeof options !== 'object') return Promise.reject(new TypeError('INVALID_TYPE', 'options', 'object', true));
+     if (options.days) options.delete_message_days = options.days;
+     const id = this.client.users.resolveID(user);
+     if (!id) return Promise.reject(new Error('BAN_RESOLVE_ID', true));",feat(GuildMemberManager): throw TypeError on incorrect GuildMemberManager#ban params (#<I>),discordjs_discord.js,test,js
+dbfbbd5308c265964b1fec315b6ece9ff626a969,"diff --git a/test/integration/StreamrClient.test.js b/test/integration/StreamrClient.test.js
+index <HASH>..<HASH> 100644
+--- a/test/integration/StreamrClient.test.js
++++ b/test/integration/StreamrClient.test.js
+@@ -19,6 +19,14 @@ const createClient = (opts = {}) => new StreamrClient({
+ })
+ 
+ describe('StreamrClient Connection', () => {
++    it('can disconnect before connected', async (done) => {
++        const client = createClient()
++        client.once('error', done)
++        client.connect()
++        await client.disconnect()
++        done()
++    })
++
+     it('can reconnect after disconnect', (done) => {
+         const client = createClient()
+         client.on('error', done)",Add failing disconnect before connected test. (#<I>),streamr-dev_streamr-client-javascript,train,js
+3e45bb11ac7b69e4f02abac0f9ae54d6e9d7ceda,"diff --git a/index.js b/index.js
+index <HASH>..<HASH> 100644
+--- a/index.js
++++ b/index.js
+@@ -21,7 +21,14 @@ module.exports = function contributors(repo, options, cb) {
+   var github = new GitHub(options);
+ 
+   github.paged(`/repos/:${repo}/contributors`, function(err, data) {
+-    if (err) return cb(err);
++    if (err) {
++      if (/CreateListFromArrayLike/.test(err.message)) {
++        cb(null, []);
++        return;
++      }
++      cb(err);
++      return;
++    }
+     cb(null, format(data, options));
+   });
+ };",don't error when repo doesn't exist,jonschlinkert_github-contributors,test,js
+3f056957baedeaba85e74c55afee600190424815,"diff --git a/h5f.js b/h5f.js
+index <HASH>..<HASH> 100644
+--- a/h5f.js
++++ b/h5f.js
+@@ -169,8 +169,8 @@ var H5F = H5F || {};
+         }
+     };
+     setCustomValidity = function (msg) {
+-        var el = this,
+-            custMsg = msg;
++        var el = this;
++        custMsg = msg;
+             
+         el.validationMessage = custMsg;
+     };",Fixed setCustomValidity variable scoping issue,ryanseddon_H5F,test,js
+69ade729126b2ce27dd25863a0d86488fde79c25,"diff --git a/lib/collection.js b/lib/collection.js
+index <HASH>..<HASH> 100644
+--- a/lib/collection.js
++++ b/lib/collection.js
+@@ -7,8 +7,10 @@ Rye.extend(function(exports){
+         return this.elements[num < 0 ? this.elements.length + num : num]
+     }
+ 
+-    ;['forEach', 'map', 'reduce', 'push', 'sort', 'indexOf', 'concat'].forEach(function(method){
+-        exports[method] = Array.prototype[method].bind(this.elements)
++    ;['forEach', 'reduce', 'push', 'sort', 'indexOf', 'concat'].forEach(function(method){
++        exports[method] = function(fn){
++            return this.elements[method](fn)
++        }
+     })
+ 
+     exports.each = function(fn){",this.elements can't be bound since it's dynamic,ryejs_rye,test,js
+aac8acc22be7d7af99933ef099eca7deda43cb40,"diff --git a/packages/discord.js/src/structures/Guild.js b/packages/discord.js/src/structures/Guild.js
+index <HASH>..<HASH> 100644
+--- a/packages/discord.js/src/structures/Guild.js
++++ b/packages/discord.js/src/structures/Guild.js
+@@ -560,7 +560,7 @@ class Guild extends AnonymousGuild {
+    * @returns {Promise<Collection<string, GuildTemplate>>}
+    */
+   async fetchTemplates() {
+-    const templates = await this.client.rest.get(Routes.guildTemplate(this.id));
++    const templates = await this.client.rest.get(Routes.guildTemplates(this.id));
+     return templates.reduce((col, data) => col.set(data.code, new GuildTemplate(this.client, data)), new Collection());
+   }",fix(Guild): unable to fetch templates (#<I>),discordjs_discord.js,val,js
+e862498a63845c584ae5ee36cad11235149f6d9d,"diff --git a/grunt.js b/grunt.js
+index <HASH>..<HASH> 100644
+--- a/grunt.js
++++ b/grunt.js
+@@ -83,6 +83,7 @@ grunt.registerTask( ""testswarm"", function( commit, configFile ) {
+ 	testswarm({
+ 		url: config.swarmUrl,
+ 		pollInterval: 10000,
++		timeout: 1000 * 60 * 30,
+ 		done: this.async()
+ 	}, {
+ 		authUsername: ""qunit"",",Increasing testswarm timeout - other running jobs can make this take longer,JamesMGreene_qunit-assert-html,train,js
+afc2fd60154841d0e531803a2a3ec81c1952aecb,"diff --git a/lib/playout.js b/lib/playout.js
+index <HASH>..<HASH> 100644
+--- a/lib/playout.js
++++ b/lib/playout.js
+@@ -19,7 +19,7 @@ module.exports = function (ccg) {
+ 
+ 		if (typeof(cb) != ""function"") cb = false;
+ 
+-		if (file) cmd += "" "" + file.replace(/\\/g, ""\\\\"");
++		if (file) cmd += "" \"""" + file.replace(/\\/g, ""\\\\"") + ""\"""";
+ 
+ 		if (options.loop) cmd += "" LOOP"";",file path should be in quotes for playout commands,respectTheCode_node-caspar-cg,test,js
+e164c1b401518af1cd015bd7212eb2869bc754fa,"diff --git a/ekko-lightbox.js b/ekko-lightbox.js
+index <HASH>..<HASH> 100644
+--- a/ekko-lightbox.js
++++ b/ekko-lightbox.js
+@@ -475,7 +475,7 @@ const Lightbox = (($) => {
+ 			// local ajax can be loaded into the container itself
+ 			if (!disableExternalCheck && !this._isExternal(url)) {
+ 				$containerForElement.load(url, $.proxy(() => {
+-					return this._$element.trigger('loaded.bs.modal');l
++					return this._$element.trigger('loaded.bs.modal');
+ 				}));
+ 
+ 			} else {",Remove variable definition after return statement per issue#<I>,ashleydw_lightbox,train,js
+51dc39c0b606236e34f9c4fa55328f468d929228,"diff --git a/packages/selenium-ide/src/neo/IO/SideeX/ext-command.js b/packages/selenium-ide/src/neo/IO/SideeX/ext-command.js
+index <HASH>..<HASH> 100644
+--- a/packages/selenium-ide/src/neo/IO/SideeX/ext-command.js
++++ b/packages/selenium-ide/src/neo/IO/SideeX/ext-command.js
+@@ -77,7 +77,7 @@ export default class ExtCommand {
+     this.attach();
+   }
+ 
+-  clear() {
++  cleanup() {
+     this.detach();
+     this.playingTabNames = {};
+     this.playingTabStatus = {};",remove event listeners when playback ends,SeleniumHQ_selenium-ide,test,js
+1db38e3cf2ab6074af26c47b6ff576a3bf1a2e6f,"diff --git a/test/events/events.test.js b/test/events/events.test.js
+index <HASH>..<HASH> 100644
+--- a/test/events/events.test.js
++++ b/test/events/events.test.js
+@@ -200,3 +200,8 @@ test.cb(`Event [invalid request:group]`, invalidEventMacro, {
+   post_type: 'request',
+   request_type: 'group'
+ })
++
++test.cb(`Event [invalid meta_event]`, invalidEventMacro, {
++  post_type: 'meta_event',
++  meta_event_type: 'fake'
++})",test: add a test for invalid meta event.,momocow_node-cq-websocket,train,js
+7ab4020b85ca1ca9c742ca929b134e0886034305,"diff --git a/src/preloadjs/LoadQueue.js b/src/preloadjs/LoadQueue.js
+index <HASH>..<HASH> 100644
+--- a/src/preloadjs/LoadQueue.js
++++ b/src/preloadjs/LoadQueue.js
+@@ -387,7 +387,7 @@ this.createjs = this.createjs || {};
+ 			createjs.SVGLoader,
+ 			createjs.BinaryLoader,
+ 			createjs.VideoLoader,
+-			createjs.TextLoader,
++			createjs.TextLoader
+ 		];
+ 
+ 		/**","Remove trailing comma for this._availableLoaders
+
+IE8 (and below) will parse trailing commas in array and object literals incorrectly.",CreateJS_PreloadJS,train,js
+0a8927abc512b9cc3c2fe5f7e5b19799a1661ccc,"diff --git a/src/index.js b/src/index.js
+index <HASH>..<HASH> 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -21,7 +21,7 @@ function publishLatest(options, cb) {
+     if (stdout) {
+       console.log('stdout:', stdout); // eslint-disable-line no-console
+     }
+-    cb(error, result);
++    cb && cb(error, result);
+   });
+ }","fix(src): Handle missing callback
+
+the bin doesn't use the callback",kentcdodds_publish-latest,train,js
+7a1c6c38b01d05f69c3ef0e3e0b2de03a7e0968c,"diff --git a/benchmark/gridfs_benchmark.js b/benchmark/gridfs_benchmark.js
+index <HASH>..<HASH> 100644
+--- a/benchmark/gridfs_benchmark.js
++++ b/benchmark/gridfs_benchmark.js
+@@ -6,7 +6,7 @@ var Db = require('../lib/mongodb').Db,
+ var Mongolian = require('mongolian');
+ var COUNT = 1000;
+ var currentWritingIndex = 0;
+-var server = new Server(""127.0.0.1"", 27017, {auto_reconnect: true, poolSize:3, native_parser:false});
++var server = new Server(""127.0.0.1"", 27017, {auto_reconnect: true, poolSize:1, native_parser:true});
+ 
+ // Read in the test file
+ var fileData = require('fs').readFileSync(""./test/gridstore/iya_logo_final_bw.jpg"");",Fix to make sure mongodb-native is not cheating with poolsize > 1,mongodb_node-mongodb-native,test,js
+a11dc7a7d29a18ebf1e6628ca5f4246f54673e11,"diff --git a/test/array.js b/test/array.js
+index <HASH>..<HASH> 100644
+--- a/test/array.js
++++ b/test/array.js
+@@ -110,7 +110,7 @@ exports.array = {
+                 },
+                 i;
+ 
+-            for(i = 0; i < a.length; i++) {
++            for (i = a.length - 1; i >= 0; --i) {
+                 accum = minus(accum, a[i]);
+             }",Making sure we correctly test foldRight.,SimonRichardson_squishy-pants,train,js
+6c5e43828dc94d7699fb4d8ec50fd044ca24f7bb,"diff --git a/index.js b/index.js
+index <HASH>..<HASH> 100644
+--- a/index.js
++++ b/index.js
+@@ -60,7 +60,8 @@ module.exports = function (blobs, url, opts) {
+         if(!size) return next(new Error('no blob:'+hash))
+ 
+         headers(res, hash)
+-        res.setHeader('content-length', size)
++        if(opts.size === false || q.size)
++          res.setHeader('content-length', size)
+ 
+         if(q.filename)
+           res.setHeader('Content-Disposition', 'inline; filename='+q.filename)",option to disable sending content-length header,ssbc_multiblob-http,train,js
+ed1b92a7e67b74fff0df854049ae53c56c3ba9bb,"diff --git a/lib/cluster/storage/state.js b/lib/cluster/storage/state.js
+index <HASH>..<HASH> 100644
+--- a/lib/cluster/storage/state.js
++++ b/lib/cluster/storage/state.js
+@@ -22,6 +22,7 @@ module.exports = function(context) {
+         var index = timeseriesIndex(timeseriesFormat, _index, slice._created).index;
+         var record = {
+             _created: slice._created,
++            _updated: slice._created,
+             slice_id: slice.slice_id,
+             slicer_id: slice.slicer_id,
+             slicer_order: slice.slicer_order,",fixed incorrect state mapping errors resolves #<I>,terascope_teraslice,train,js
+997747327937612981bc13040d1e95c5ba84fda9,"diff --git a/src/types/multiCheckbox.js b/src/types/multiCheckbox.js
+index <HASH>..<HASH> 100644
+--- a/src/types/multiCheckbox.js
++++ b/src/types/multiCheckbox.js
+@@ -71,6 +71,10 @@ export default ngModule => {
+           // Must make sure we mark as touched because only the last checkbox due to a bug in angular.
+           $scope.fc.$setTouched();
+           checkValidity(true);
++          
++          if ($scope.to.onChange) {
++            $scope.to.onChange();
++          }
+         }
+ 
+         if (opts.expressionProperties && opts.expressionProperties['templateOptions.required']) {",fix: User's onChange event should get called if given,formly-js_angular-formly-templates-bootstrap,train,js
+45255860bc78e5a90d7f6b3938c213628d8d6609,"diff --git a/lib/bin.js b/lib/bin.js
+index <HASH>..<HASH> 100644
+--- a/lib/bin.js
++++ b/lib/bin.js
+@@ -8,13 +8,13 @@ var options = [
+     name: 'jshint',
+     type: 'string',
+     description: 'Defines the source file for jshint',
+-    example: '\'polyjuice --jshint .jshintrc\''
++    example: '\'polyjuice --jshint=.jshintrc\''
+   },
+   {
+     name: 'jscs',
+     type: 'string',
+     description: 'Defines the source file for jscs',
+-    example: '\'polyjuice --jscs .jscsrc\''
++    example: '\'polyjuice --jscs=.jscsrc\''
+   }
+ ];","Fix --help examples to include '='
+
+Fixes #9",brenolf_polyjuice,train,js
+8bc20b28fd1191902dac745665f3dc661ddded54,"diff --git a/test/api/interop_extra_test.js b/test/api/interop_extra_test.js
+index <HASH>..<HASH> 100644
+--- a/test/api/interop_extra_test.js
++++ b/test/api/interop_extra_test.js
+@@ -147,7 +147,8 @@ describe(`${anyGrpc.clientName} client -> ${anyGrpc.serverName} server`, functio
+       });
+     });
+     it('should receive all messages in a long stream', function(done) {
+-      this.timeout(20000);
++      // the test is slow under aarch64 emulator
++      this.timeout(80000);
+       var arg = {
+         response_type: 'COMPRESSABLE',
+         response_parameters: [",increase timeout for make emulated aarch<I> tests green,grpc_grpc-node,val,js
+27cee3f7233fbbbeed31f0cf03ea81bf92555b18,"diff --git a/dygraph-externs.js b/dygraph-externs.js
+index <HASH>..<HASH> 100644
+--- a/dygraph-externs.js
++++ b/dygraph-externs.js
+@@ -59,7 +59,7 @@ Dygraph.prototype.yAxisRange;
+ Dygraph.prototype.yAxisRanges;
+ 
+ /** @type {function(?number, ?number, ?number): Array.<?number>} */
+-Dygraph.prototype.toDomCoords
++Dygraph.prototype.toDomCoords;
+ 
+ /** @type {function(?number): ?number} */
+ Dygraph.prototype.toDomXCoord;",Add missing semicolon in externs (#<I>),danvk_dygraphs,test,js
+5a78e5aa3da4102f36ab8c815b801530c8d86872,"diff --git a/client/js/s3/uploader.basic.js b/client/js/s3/uploader.basic.js
+index <HASH>..<HASH> 100644
+--- a/client/js/s3/uploader.basic.js
++++ b/client/js/s3/uploader.basic.js
+@@ -6,6 +6,10 @@
+ qq.s3.FineUploaderBasic = function(o) {
+     var options = {
+         request: {
++            // Making this configurable in the traditional uploader was probably a bad idea.
++            // Let's just set this to ""uuid"" in the S3 uploader and not document the fact that this can be changed.
++            uuidName: ""uuid"",
++
+             signatureEndpoint: null,
+             successEndpoint: null,
+             accessKey: null,","feat(client/js/s3/uploader.basic.js): #<I> #<I> #<I> - uuid param name in requests should be ""uuid""",FineUploader_fine-uploader,train,js
+4112ed3a393f67c9c746a515eaf7b1d989691b21,"diff --git a/packages/webiny-app-security/src/admin/views/Login.js b/packages/webiny-app-security/src/admin/views/Login.js
+index <HASH>..<HASH> 100644
+--- a/packages/webiny-app-security/src/admin/views/Login.js
++++ b/packages/webiny-app-security/src/admin/views/Login.js
+@@ -28,7 +28,7 @@ const Login = ({ login, error }: { login: Function, error?: Object }) => {
+     return (
+         <Wrapper>
+             <Logo src={logoOrange} />
+-            <Form onSubmit={login}>
++            <Form onSubmit={login} submitOnEnter>
+                 {({ form, Bind }) => (
+                     <React.Fragment>
+                         <LoginContent>",Add submitOnEnter prop to login form.,Webiny_webiny-js,train,js
+ca67a4b83afe94c20e328e61a446f7ee2f6e291c,"diff --git a/lib/commands.js b/lib/commands.js
+index <HASH>..<HASH> 100644
+--- a/lib/commands.js
++++ b/lib/commands.js
+@@ -182,6 +182,7 @@ module.exports = [
+  *
+  * @export
+  */
++<<<<<<< HEAD
+ 	'signalStrength',
+ 
+ /**
+@@ -195,5 +196,8 @@ module.exports = [
+  * @export
+  */
+ 	""drive""
++=======
++	'signalStrength'
++>>>>>>> Add support for 'drive' function needed for smooth joystick flight
+ 
+ ];",Add support for 'drive' function needed for smooth joystick flight,ChrisTheBaron_cylon-rolling-spider,train,js
+70ea7ae776b483565c16f797a87d3e2368feace2,"diff --git a/superset-frontend/webpack.proxy-config.js b/superset-frontend/webpack.proxy-config.js
+index <HASH>..<HASH> 100644
+--- a/superset-frontend/webpack.proxy-config.js
++++ b/superset-frontend/webpack.proxy-config.js
+@@ -129,6 +129,10 @@ function processHTML(proxyResponse, response) {
+     .on('data', data => {
+       body = Buffer.concat([body, data]);
+     })
++    .on('error', error => {
++      console.error(error);
++      response.end(`Error fetching proxied request: ${error.message}`);
++    })
+     .on('end', () => {
+       response.end(toDevHTML(body.toString()));
+     });",fix: error handling for webpack proxy (#<I>),apache_incubator-superset,train,js
+c3396c6ee4731e4288a2213e931d0eb7c334426c,"diff --git a/devices/onesti.js b/devices/onesti.js
+index <HASH>..<HASH> 100644
+--- a/devices/onesti.js
++++ b/devices/onesti.js
+@@ -8,7 +8,7 @@ const constants = require('../lib/constants');
+ 
+ module.exports = [
+     {
+-        zigbeeModel: ['easyCodeTouch_v1'],
++        zigbeeModel: ['easyCodeTouch_v1', 'EasyCodeTouch'],
+         model: 'easyCodeTouch_v1',
+         vendor: 'Onesti Products AS',
+         description: 'Zigbee module for EasyAccess code touch series',","Add EasyCodeTouch to easyCodeTouch_v1 (#<I>)
+
+* Update onesti.js
+
+
+
+* Update onesti.js",Koenkk_zigbee-shepherd-converters,train,js
+b361473e7e15fffe64dee50975e172aa0e6fcec0,"diff --git a/packages/@vue/cli-ui/src/graphql-api/connectors/projects.js b/packages/@vue/cli-ui/src/graphql-api/connectors/projects.js
+index <HASH>..<HASH> 100644
+--- a/packages/@vue/cli-ui/src/graphql-api/connectors/projects.js
++++ b/packages/@vue/cli-ui/src/graphql-api/connectors/projects.js
+@@ -276,7 +276,7 @@ async function create (input, context) {
+     answers.packageManager = input.packageManager
+ 
+     // Config files
+-    if ((index = answers.features.includes('use-config-files')) !== -1) {
++    if ((index = answers.features.indexOf('use-config-files')) !== -1) {
+       answers.features.splice(index, 1)
+       answers.useConfigFiles = 'files'
+     }",fix(ui): create: first feature removed if 'use config files' not checked,vuejs_vue-cli,train,js
+e99b279677296b34c0a4dc63ed89c9379b1858b8,"diff --git a/src/form/form.js b/src/form/form.js
+index <HASH>..<HASH> 100644
+--- a/src/form/form.js
++++ b/src/form/form.js
+@@ -232,7 +232,7 @@ d3plus.form = function() {
+                 , ""focus"" , ""format"" , ""height"" , ""hover"" , ""icon"" , ""id""
+                 , ""keywords"" , ""open"" , ""order"" , ""remove"" , ""search""
+                 , ""select"" , ""selectAll"" , ""text"" , ""title"" , ""type"" , ""width"" ]
+-    , styles  = [ ""drop"" , ""font"" , ""icon"" , ""timing"" , ""title"" , ""ui"" ]
++    , styles  = [ ""font"" , ""icon"" , ""timing"" , ""title"" , ""ui"" ]
+ 
+   d3plus.method( vars , methods , styles )",removed deprecated style from form,alexandersimoes_d3plus,train,js
+18d971cfe25e187dce2cab9161e57c8b0750757b,"diff --git a/not.js b/not.js
+index <HASH>..<HASH> 100644
+--- a/not.js
++++ b/not.js
+@@ -170,7 +170,7 @@ function jshtmlProxy(builder) {
+       scopeName = defaultScopeName;
+     }
+     var proxy = Proxy.createFunction({ //TODO: Alternate implementation for the newer harmony proxy API supported by Firefox
+-      getPropertyDescriptor: function(key) {return {value: true}}, //We are all the properties!
++      getPropertyDescriptor: function(key) {return {value: true, configurable: true}}, //We are all the properties!
+       get: function(rec, key) {
+         return (function() {
+             if (key === scopeName) {",add configurable to trap for node <I>,weswigham_not.js,val,js
+35f6b6c9726abeafa51d71858c23c9c943b28877,"diff --git a/lib/mapping.js b/lib/mapping.js
+index <HASH>..<HASH> 100644
+--- a/lib/mapping.js
++++ b/lib/mapping.js
+@@ -324,6 +324,13 @@ var options = {
+       bool: true,
+       info: 'disable threaded HTML parser (Chrome only)'
+     },
++    'spdynossl': {
++      name: 'spdyNoSSL',
++      key: 'q',
++      api: 'spdyNoSSL',
++      bool: true,
++      info: 'use SPDY without SSL (Chrome only)'
++    },
+     'poll': {
+       name: 'pollResults',
+       param: 'interval',",new Chrome options: spdynossl as seen on <URL>,marcelduran_webpagetest-api,train,js
+26ed3aaecdff6124127d087802aa60897c09b4c2,"diff --git a/pywb/static/vidrw.js b/pywb/static/vidrw.js
+index <HASH>..<HASH> 100644
+--- a/pywb/static/vidrw.js
++++ b/pywb/static/vidrw.js
+@@ -109,6 +109,10 @@ __wbvidrw = (function() {
+         var embed = document.createElement(""embed"");
+         embed.src = wbinfo.url;
+         player.appendChild(embed);
++
++        if (!window.MutationObserver) {
++            handle_embed_tag(embed);
++        }
+     }
+ 
+     function handle_embed_tag(elem)",vidrw: further fix for #<I> for browsers w/o mutationobserver support (e.g. safari),webrecorder_pywb,train,js
+f57ac91354e55217cbe981648a56e3ebc27d8a1d,"diff --git a/core/src/utilities/helpers/routing-helpers.js b/core/src/utilities/helpers/routing-helpers.js
+index <HASH>..<HASH> 100644
+--- a/core/src/utilities/helpers/routing-helpers.js
++++ b/core/src/utilities/helpers/routing-helpers.js
+@@ -36,7 +36,8 @@ class RoutingHelpersClass {
+         );
+       }
+       const validChild = children.find(
+-        child => child.pathSegment && (child.viewUrl || (child.externalLink && child.externalLink.url))
++        child =>
++          child.pathSegment && (child.viewUrl || child.compound || (child.externalLink && child.externalLink.url))
+       );
+       if (validChild) return validChild.pathSegment;
+     }",defaultChild fix for compounds (#<I>),kyma-project_luigi,train,js
+cc43c6c9e5be06cd77a26015e519f72ae4f3e918,"diff --git a/test/replace.js b/test/replace.js
+index <HASH>..<HASH> 100644
+--- a/test/replace.js
++++ b/test/replace.js
+@@ -1,7 +1,7 @@
+ var replace = require( ""../src/str-replace"" );
+ 
+ module.exports = {
+-  replaceAll: function( assert ) {
++  replace_all: function( assert ) {
+     var actual = replace.all( ""/"" ).from( ""/home/dir"" ).to( ""\\"" );
+     var expected = ""\\home\\dir"";
+     assert.strictEqual( actual, expected );",Use dash pattern in tests for better console visibility,FagnerMartinsBrack_str-replace,train,js
+fdf2708baeb52755900e23692ed26042dec9b991,"diff --git a/src/renderer/map/MapCanvasRenderer.js b/src/renderer/map/MapCanvasRenderer.js
+index <HASH>..<HASH> 100644
+--- a/src/renderer/map/MapCanvasRenderer.js
++++ b/src/renderer/map/MapCanvasRenderer.js
+@@ -785,7 +785,7 @@ class MapCanvasRenderer extends MapRenderer {
+     }
+ 
+     _checkSize() {
+-        if (!this.map || this.map.isInteracting()) {
++        if (!this.map) {
+             return;
+         }
+         // refresh map's dom position",enable checkSize when map is interacting,maptalks_maptalks.js,train,js
