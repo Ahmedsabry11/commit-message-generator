@@ -12,7 +12,7 @@ import os
 import pandas as pd
 
 def evaluate(dataset_path):
-    openai_client = OpenAIClient()
+    openai_client = OpenAIClient(model="gpt-3.5-turbo")
     gemini_client = GeminiClient()
 
     # Load the dataset
