@@ -19,25 +19,31 @@ class GeminiClient:
     
     def generate_commit_message(self,diff, prompt_template):
         prompt = prompt_template.format(diff=diff)
-        # Create a chat completion request
-        response = self.client.chat.completions.create(
-            model=self.model,
-            n=1,
-            messages=[
-                {"role": "system", "content": "You are commit message generator."},
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
-        
-        # Check if 'choices' is in the response and has at least one choice
-        if response.choices is None or len(response.choices) == 0:
-            raise Exception("No choices returned from OpenAI API.")
-        
-        # Check if 'message' is in the first choice and has 'content'
-        if response.choices[0].message is None or response.choices[0].message.content is None:
-            raise Exception("No message content returned from OpenAI API.")
 
-        return response.choices[0].message.content.strip()
+        try:
+            return "Gemini client is not available."
+            # Create a chat completion request
+            response = self.client.chat.completions.create(
+                model=self.model,
+                n=1,
+                messages=[
+                    {"role": "system", "content": "You are commit message generator."},
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+            
+            # Check if 'choices' is in the response and has at least one choice
+            if response.choices is None or len(response.choices) == 0:
+                raise Exception("No choices returned from OpenAI API.")
+            
+            # Check if 'message' is in the first choice and has 'content'
+            if response.choices[0].message is None or response.choices[0].message.content is None:
+                raise Exception("No message content returned from OpenAI API.")
+
+            return response.choices[0].message.content.strip()
+        
+        except Exception as e:
+            raise Exception(f"Failed to generate commit message: {e}")
