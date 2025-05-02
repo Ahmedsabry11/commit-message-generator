@@ -7,4 +7,7 @@ google-generative-ai # for Google Gemini API
 evaluate
 rouge_score
 bert-score
-
+faiss-cpu 
+langchain 
+openai 
+tiktoken
