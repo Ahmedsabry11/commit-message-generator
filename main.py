@@ -35,7 +35,6 @@ def run_open_ai_inference_on_dataset(dataset_path,output_path,model):
             print(f"\n--- Prompt Style: {prompt_name} ---")
 
             openai_message = ''
-            gemini_message = ''
 
             try:
                 openai_message = openai_client.generate_commit_message(diff, template)
@@ -50,6 +49,8 @@ def run_open_ai_inference_on_dataset(dataset_path,output_path,model):
                 'prompt_style': prompt_name,
                 'inference_message': openai_message,
             })
+
+            break  # Break after the first prompt style only zero_shot
 
     # Save results to a new DataFrame
     results_df = pd.DataFrame(results)
@@ -101,6 +102,8 @@ def run_gemini_inference_on_dataset(dataset_path,output_path,model):
                 'inference_message': gemini_message,
             })
 
+            break  # Break after the first prompt style only zero_shot
+
     # Save results to a new DataFrame
     results_df = pd.DataFrame(results)
 
@@ -112,6 +115,8 @@ def run_gemini_inference_on_dataset(dataset_path,output_path,model):
     print(f"Results saved to {output_path}")
 
 if __name__ == "__main__":
+    print("Running inference on the dataset...")
+
     # ###################################################################################################################
     # ######################################################## Java #####################################################
     # ###################################################################################################################
@@ -137,25 +142,77 @@ if __name__ == "__main__":
 
 
 
-    ###################################################################################################################
-    ######################################################## Java #####################################################
-    ###################################################################################################################
-    # Java
-    print("Running inference on the java dataset...")
+    # ###################################################################################################################
+    # ####################################################### Python ####################################################
+    # ###################################################################################################################    
+    # # Python
+    # print("Running inference on the python dataset...")
     
 
-    #  Test(1) Java vs OpenAI gpt-3.5-turbo
-    dataset_path = 'dataset/samples/java.csv'
-    open_ai_model = 'gpt-3.5-turbo'
-    output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{open_ai_model}.csv"
+    # # #  Test(1) Python vs OpenAI gpt-3.5-turbo
+    # # dataset_path = 'dataset/samples/py.csv'
+    # # open_ai_model = 'gpt-3.5-turbo'
+    # # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{open_ai_model}_zero_shot_only.csv"
     
-    # Run inference on the dataset
-    run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    # # # Run inference on the dataset
+    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
     
-    #  Test(2) Java vs Gemini 2.0 Flash
-    dataset_path = 'dataset/samples/java.csv'
-    gemini_model = 'gemini-2.0-flash'
-    output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{gemini_model}.csv"
+    # #  Test(2) Python vs Gemini 2.0 Flash
+    # dataset_path = 'dataset/samples/py.csv'
+    # gemini_model = 'gemini-2.0-flash'
+    # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{gemini_model}_zero_shot_only.csv"
 
-    # Run inference on the dataset
-    run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+    # # Run inference on the dataset
+    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+
+
+    
+
+    # ###################################################################################################################
+    # ######################################################### JS ######################################################
+    # ###################################################################################################################
+    # # JavaScript
+    # print("Running inference on the javascript dataset...")
+    
+
+    # # #  Test(1) JavaScript vs OpenAI gpt-3.5-turbo
+    # # dataset_path = 'dataset/samples/js.csv'
+    # # open_ai_model = 'gpt-3.5-turbo'
+    # # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{open_ai_model}_zero_shot_only.csv"
+    
+    # # # Run inference on the dataset
+    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    
+    # #  Test(2) JavaScript vs Gemini 2.0 Flash
+    # dataset_path = 'dataset/samples/js.csv'
+    # gemini_model = 'gemini-2.0-flash'
+    # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{gemini_model}_zero_shot_only.csv"
+
+    # # Run inference on the dataset
+    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+
+    
+
+    
+    # ###################################################################################################################
+    # ######################################################### PHP #####################################################
+    # ###################################################################################################################
+    # # PHP
+    # print("Running inference on the PHP dataset...")
+    
+
+    # # #  Test(1) PHP vs OpenAI gpt-3.5-turbo
+    # # dataset_path = 'dataset/samples/php.csv'
+    # # open_ai_model = 'gpt-3.5-turbo'
+    # # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{open_ai_model}_zero_shot_only.csv"
+    
+    # # # Run inference on the dataset
+    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    
+    # #  Test(2) PHP vs Gemini 2.0 Flash
+    # dataset_path = 'dataset/samples/php.csv'
+    # gemini_model = 'gemini-2.0-flash'
+    # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{gemini_model}_zero_shot_only.csv"
+
+    # # Run inference on the dataset
+    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
