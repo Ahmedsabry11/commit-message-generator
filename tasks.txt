@@ -1,0 +1,6 @@
+1. uses openai models gpt3.5 - gpt4 - gpt4 -o , mini.
+2. uses gemini models .
+3. design different prompts for commit message generation and fine tune it to get best result.
+4. generate samples for designing prompts and evaluating different LLMs and evaluating different prompts.
+5. apply different evaluation critieria for comparing commit message semantic meaning.
+6. Use RAG as new solution for to enhance abiltiy of commit message Generation.
