@@ -13,6 +13,8 @@ class OpenAIClient:
     def generate_commit_message(self, diff, prompt_template):
         prompt = prompt_template.format(diff=diff)
         try:
+            # # Mocked response for testing purposes
+            # return "OpenAI client is not available."
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
@@ -23,9 +25,9 @@ class OpenAIClient:
                 temperature=0.3
             )
 
-            # Print the structured response for debugging
-            print("Full response:", response)
-            print("\n\n")
+            # # Print the structured response for debugging
+            # print("Full response:", response)
+            # print("\n\n")
             
             # Extract and return the commit message content
             return response.choices[0].message.content.strip()
