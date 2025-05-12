@@ -1,0 +1,23 @@
+diff,expected_message,prompt_style,inference_message
+"diff --git a/packages/toolkit/bin/index.js b/packages/toolkit/bin/index.js
+index <HASH>..<HASH> 100755
+--- a/packages/toolkit/bin/index.js
++++ b/packages/toolkit/bin/index.js
+@@ -13,7 +13,7 @@ process.on('unhandledRejection', err => {
+ });
+ 
+ var chalk = require('chalk');
+-const packageJson = require('../package.json');
++var packageJson = require('../package.json');
+ 
+ var currentNodeVersion = process.versions.node;
+ var semver = currentNodeVersion.split('.');
+@@ -30,7 +30,7 @@ if (major < 8) {
+   process.exit(1);
+ }
+ 
+-const main = require('../src');
++var main = require('../src');
+ 
+ main(process).catch(error => {
+   console.error(error);",fix(toolkit): rename const to var,feature,Standardize variable declarations to use 'var' in toolkit bin script.
