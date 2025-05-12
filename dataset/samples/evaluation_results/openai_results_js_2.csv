@@ -20,4 +20,4 @@ index <HASH>..<HASH> 100755
 +var main = require('../src');
  
  main(process).catch(error => {
-   console.error(error);",fix(toolkit): rename const to var,feature,Standardize variable declarations to use 'var' in toolkit bin script.
+   console.error(error);",fix(toolkit): rename const to var,feature,Standardize variable declarations in index.js from const to var for consistency.
