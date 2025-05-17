@@ -10,8 +10,13 @@ class OpenAIClient:
         self.model = model
         self.client = OpenAI()
 
-    def generate_commit_message(self, diff, prompt_template):
-        prompt = prompt_template.format(diff=diff)
+    def generate_commit_message(self, diff, prompt_template, context=None):
+        if context:
+            prompt = prompt_template.format(diff=diff, context=context)
+        else:
+            prompt = prompt_template.format(diff=diff)
+
+        # print(f"Prompt: {prompt}")
         try:
             # # Mocked response for testing purposes
             # return "OpenAI client is not available."

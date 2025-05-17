@@ -8,5 +8,18 @@
 1. try different models such as gpt3.5, gpt4-o, gemini, deepseek-v1 if available.
 2. try different evaluation critieria and methods for evaluating different prompts output.
 3. generate samples from distribution of data for each language.
-4. tune different prompts such as styling prompts.
-5. try RAG or similar approach where you enter samples near code and should be taken as reference.
+4. try RAG or similar approach where you enter samples near code and should be taken as reference.
+5. tune different prompts such as styling prompts.
+
+Abstract
+Introduction
+BackGround or Problem Statement
+Related Work
+Study Design
+Results
+Conclusion
+Acknowledgment
+References
+
+
+

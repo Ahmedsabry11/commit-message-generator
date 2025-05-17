@@ -14,6 +14,8 @@ dataset/util.py
 dataset/commitbench.csv
 dataset/*.csv
 
+*.pkl
+*.index
 # C extensions
 *.so
 

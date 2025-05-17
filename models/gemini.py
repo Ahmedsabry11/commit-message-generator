@@ -17,8 +17,11 @@ class GeminiClient:
         )
         self.model = model
     
-    def generate_commit_message(self,diff, prompt_template):
-        prompt = prompt_template.format(diff=diff)
+    def generate_commit_message(self,diff, prompt_template, context=None):
+        if context:
+            prompt = prompt_template.format(diff=diff, context=context)
+        else:
+            prompt = prompt_template.format(diff=diff)
 
         try:
             # # Mocked response for testing purposes

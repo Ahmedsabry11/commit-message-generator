@@ -1,5 +1,8 @@
+import pickle
+import faiss
 from models.openai import OpenAIClient
 from models.gemini import GeminiClient
+from models.rag import RAG
 from prompts.prompt import PROMPTS
 
 import os
@@ -103,26 +106,55 @@ def run_gemini_inference_on_dataset(dataset_path,output_path,model, prompt_style
 
 
 if __name__ == "__main__":
-    print("Running inference on the dataset...")
+    
+    # Load the index and documents
 
-    row_index = 2
-    # Run inference on the dataset using the OpenAI client
-    output_path = f"dataset/samples/evaluation_results/openai_results_js_{row_index}.csv"
-    run_open_ai_inference_on_dataset(
-        dataset_path="dataset/samples/js.csv",
-        output_path=output_path,
-        model="gpt-4-turbo",
-        prompt_style="feature",
-        row_index=row_index
-    )
+    index = faiss.read_index("faiss_index_java.index")
+    with open("documents_java.pkl", "rb") as f:
+        documents = pickle.load(f)
 
-    # Run inference on the dataset using the Gemini client
-    output_path = f"dataset/samples/evaluation_results/gemini_results_js_{row_index}.csv"
-    run_gemini_inference_on_dataset(
-        dataset_path="dataset/samples/js.csv",
-        output_path=output_path,
-        model="gemini-2.0-flash",
-        prompt_style="feature",
-        row_index=row_index
-    )
+    # Initialize RAG
+    rag = RAG(index_path="faiss_index_java.index", documents=documents)
+
+    # Example usage
+    diff = '''diff --git a/support/cas-server-support-throttle-bucket4j/src/main/java/org/apereo/cas/web/Bucket4jThrottledRequestExecutor.java b/support/cas-server-support-throttle-bucket4j/src/main/java/org/apereo/cas/web/Bucket4jThrottledRequestExecutor.java
+index <HASH>..<HASH> 100644
+--- a/support/cas-server-support-throttle-bucket4j/src/main/java/org/apereo/cas/web/Bucket4jThrottledRequestExecutor.java
++++ b/support/cas-server-support-throttle-bucket4j/src/main/java/org/apereo/cas/web/Bucket4jThrottledRequestExecutor.java
+@@ -53,8 +53,9 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
+             if (this.blocking) {
+                 LOGGER.trace(""Attempting to consume a token for the authentication attempt"");
+                 result = !this.bucket.tryConsume(1, MAX_WAIT_NANOS, BlockingStrategy.PARKING);
++            } else {
++                result = !this.bucket.tryConsume(1);
+             }
+-            result = !this.bucket.tryConsume(1);
+         } catch (final InterruptedException e) {
+             LOGGER.error(e.getMessage(), e);
+             Thread.currentThread().interrupt();'''
+    context = rag.retrieve_similar_context(diff, k=4, ignore_first=True)
+    print("Retrieved context:")
+    print(context)
+    # print("Running inference on the dataset...")
+
+    # row_index = 2
+    # # Run inference on the dataset using the OpenAI client
+    # output_path = f"dataset/samples/evaluation_results/openai_results_js_{row_index}.csv"
+    # run_open_ai_inference_on_dataset(
+    #     dataset_path="dataset/samples/js.csv",
+    #     output_path=output_path,
+    #     model="gpt-4-turbo",
+    #     prompt_style="feature",
+    #     row_index=row_index
+    # )
+
+    # # Run inference on the dataset using the Gemini client
+    # output_path = f"dataset/samples/evaluation_results/gemini_results_js_{row_index}.csv"
+    # run_gemini_inference_on_dataset(
+    #     dataset_path="dataset/samples/js.csv",
+    #     output_path=output_path,
+    #     model="gemini-2.0-flash",
+    #     prompt_style="feature",
+    #     row_index=row_index
+    # )
     
