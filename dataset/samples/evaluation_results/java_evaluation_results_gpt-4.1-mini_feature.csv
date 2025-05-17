@@ -1,0 +1,722 @@
+diff,expected_message,prompt_style,inference_message
+"diff --git a/wayback-core/src/main/java/org/archive/wayback/resourcestore/resourcefile/ResourceFactory.java b/wayback-core/src/main/java/org/archive/wayback/resourcestore/resourcefile/ResourceFactory.java
+index <HASH>..<HASH> 100644
+--- a/wayback-core/src/main/java/org/archive/wayback/resourcestore/resourcefile/ResourceFactory.java
++++ b/wayback-core/src/main/java/org/archive/wayback/resourcestore/resourcefile/ResourceFactory.java
+@@ -179,6 +179,8 @@ public class ResourceFactory {
+ 			r = WARCArchiveRecordToResource(reader.get(), reader);
+ 
+ 		} else {
++			is.close();
++			raf.close();
+ 			throw new ResourceNotAvailableException(""Unknown extension"");
+ 		}",Dealt with a small resource leak.,feature,Added resource cleanup by closing input streams and random access files before throwing ResourceNotAvailableException for unknown extensions.
+"diff --git a/test/de/lmu/ifi/dbs/elki/algorithm/outlier/TestLOCI.java b/test/de/lmu/ifi/dbs/elki/algorithm/outlier/TestLOCI.java
+index <HASH>..<HASH> 100644
+--- a/test/de/lmu/ifi/dbs/elki/algorithm/outlier/TestLOCI.java
++++ b/test/de/lmu/ifi/dbs/elki/algorithm/outlier/TestLOCI.java
+@@ -55,7 +55,7 @@ public class TestLOCI extends AbstractSimpleAlgorithmTest implements JUnit4Test 
+     // run LOCI on database
+     OutlierResult result = loci.run(db);
+ 
+-    testAUC(db, ""Noise"", result, 0.954444);
+-    testSingleScore(result, 146, 4.14314916);
++    testAUC(db, ""Noise"", result, 0.96222222);
++    testSingleScore(result, 146, 3.8054382);
+   }
+ }
+\ No newline at end of file","Update unit test, score has slightly improved.",feature,Update LOCI test thresholds to reflect improved AUC and adjusted single score values
+"diff --git a/rapidoid-platform/src/main/java/org/rapidoid/deploy/AppDeployer.java b/rapidoid-platform/src/main/java/org/rapidoid/deploy/AppDeployer.java
+index <HASH>..<HASH> 100644
+--- a/rapidoid-platform/src/main/java/org/rapidoid/deploy/AppDeployer.java
++++ b/rapidoid-platform/src/main/java/org/rapidoid/deploy/AppDeployer.java
+@@ -65,7 +65,7 @@ public class AppDeployer extends RapidoidThing {
+ 			""java"",
+ 			""-cp"", CLASSPATH,
+ 			""org.rapidoid.platform.DefaultApp"",
+-			""root=/app"",
++			""root="" + Env.root(),
+ 			""mode="" + Env.mode().name().toLowerCase()
+ 		};",Pass the correct root when running an application.,feature,"Changed AppDeployer to set the app root path dynamically using Env.root() instead of a fixed ""/app"" value."
+"diff --git a/structr-core/src/main/java/org/structr/core/script/Scripting.java b/structr-core/src/main/java/org/structr/core/script/Scripting.java
+index <HASH>..<HASH> 100644
+--- a/structr-core/src/main/java/org/structr/core/script/Scripting.java
++++ b/structr-core/src/main/java/org/structr/core/script/Scripting.java
+@@ -428,6 +428,9 @@ public class Scripting {
+ 					if (o instanceof ExternalPtr) {
+ 
+ 						listResult.add(((ExternalPtr)o).getInstance());
++					} else {
++
++						listResult.add(o);
+ 					}
+ 				}",Fixes issue with PyList results in Python engine results.,feature,Add handling to include non-ExternalPtr objects directly in scripting list results
+"diff --git a/drivers/pax-exam-player/src/main/java/org/ops4j/pax/exam/player/Player.java b/drivers/pax-exam-player/src/main/java/org/ops4j/pax/exam/player/Player.java
+index <HASH>..<HASH> 100644
+--- a/drivers/pax-exam-player/src/main/java/org/ops4j/pax/exam/player/Player.java
++++ b/drivers/pax-exam-player/src/main/java/org/ops4j/pax/exam/player/Player.java
+@@ -114,5 +114,6 @@ public class Player {
+                 fail( t.getMessage() );
+             }
+         }
++        stagedReactor.tearDown();
+     }
+ }",PAXEXAM-<I> Bugfixed missing tearDown call.,feature,Added teardown call to stagedReactor to ensure proper resource cleanup in Player class.
+"diff --git a/src/com/google/javascript/rhino/Node.java b/src/com/google/javascript/rhino/Node.java
+index <HASH>..<HASH> 100644
+--- a/src/com/google/javascript/rhino/Node.java
++++ b/src/com/google/javascript/rhino/Node.java
+@@ -2650,7 +2650,7 @@ public class Node implements Serializable {
+    */
+   public final void setSideEffectFlags(int flags) {
+     checkArgument(
+-        this.getToken() == Token.CALL || this.getToken() == Token.NEW,
++        this.isCall() || this.isNew(),
+         ""setIsNoSideEffectsCall only supports CALL and NEW nodes, got %s"",
+         this.getToken());","Simplify expressions involving Rhino Nodes #2
+
+-------------
+Created by MOE: <URL>",feature,Refactor setSideEffectFlags to use isCall() and isNew() methods for token type checks instead of direct token comparison.
+"diff --git a/src/main/java/com/j256/ormlite/db/SqlServerDatabaseType.java b/src/main/java/com/j256/ormlite/db/SqlServerDatabaseType.java
+index <HASH>..<HASH> 100644
+--- a/src/main/java/com/j256/ormlite/db/SqlServerDatabaseType.java
++++ b/src/main/java/com/j256/ormlite/db/SqlServerDatabaseType.java
+@@ -135,7 +135,8 @@ public class SqlServerDatabaseType extends BaseDatabaseType {
+ 
+ 	@Override
+ 	public void appendInsertNoColumns(StringBuilder sb) {
+-		sb.append(""DEFAULT VALUES"");
++		// may be: sb.append(""DEFAULT VALUES"");
++		super.appendInsertNoColumns(sb);
+ 	}
+ 
+ 	/**","Switched back to the default because I can't verify if this is a problem
+currently.",feature,"Changed SqlServerDatabaseType to use superclass method for appendInsertNoColumns instead of hardcoded ""DEFAULT VALUES"" string."
+"diff --git a/liquibase-core/src/main/java/liquibase/change/ChangeFactory.java b/liquibase-core/src/main/java/liquibase/change/ChangeFactory.java
+index <HASH>..<HASH> 100644
+--- a/liquibase-core/src/main/java/liquibase/change/ChangeFactory.java
++++ b/liquibase-core/src/main/java/liquibase/change/ChangeFactory.java
+@@ -146,7 +146,7 @@ public class ChangeFactory {
+         }
+ 
+         try {
+-            return classes.iterator().next().getConstructor().newInstance();
++            return classes.iterator().next().getConstructor().getConstructor().newInstance();
+         } catch (Exception e) {
+             throw new UnexpectedLiquibaseException(e);
+         }","Call Class.getConstructor.newInstance instead of newInstance
+
+(cherry picked from commit <I>bfcf<I>f<I>e<I>a<I>cb<I>f6c<I>e8db4e)",feature,Fix instantiation of change classes by correcting constructor invocation in ChangeFactory.
+"diff --git a/h2o-algos/src/main/java/hex/word2vec/Word2VecModel.java b/h2o-algos/src/main/java/hex/word2vec/Word2VecModel.java
+index <HASH>..<HASH> 100644
+--- a/h2o-algos/src/main/java/hex/word2vec/Word2VecModel.java
++++ b/h2o-algos/src/main/java/hex/word2vec/Word2VecModel.java
+@@ -36,7 +36,7 @@ public class Word2VecModel extends Model<Word2VecModel, Word2VecParameters, Word
+   }
+ 
+   @Override
+-  public ModelMojoWriter getMojo() {
++  public Word2VecMojoWriter getMojo() {
+     return new Word2VecMojoWriter(this);
+   }","word2vec, fix MOJO writer - it needs to return a concrete implementation",feature,Changed getMojo() method to return Word2VecMojoWriter for improved model serialization.
+"diff --git a/src/frontend/org/voltdb/RealVoltDB.java b/src/frontend/org/voltdb/RealVoltDB.java
+index <HASH>..<HASH> 100644
+--- a/src/frontend/org/voltdb/RealVoltDB.java
++++ b/src/frontend/org/voltdb/RealVoltDB.java
+@@ -1145,7 +1145,7 @@ public class RealVoltDB implements VoltDBInterface, RestoreAgent.Callback
+         String buildInfo[] = extractBuildInfo();
+         m_versionString = buildInfo[0];
+         m_buildString = buildInfo[1];
+-        hostLog.info(String.format(""Build: %s %s %s"", m_versionString, m_buildString, editionTag));
++        consoleLog.info(String.format(""Build: %s %s %s"", m_versionString, m_buildString, editionTag));
+     }
+ 
+     /**",ENG-<I> Add buildstring to console output.,feature,Change build information logging from hostLog to consoleLog for improved output visibility.
+"diff --git a/src/main/java/dtest/actions/ExecuteRegex.java b/src/main/java/dtest/actions/ExecuteRegex.java
+index <HASH>..<HASH> 100644
+--- a/src/main/java/dtest/actions/ExecuteRegex.java
++++ b/src/main/java/dtest/actions/ExecuteRegex.java
+@@ -37,6 +37,8 @@ public class ExecuteRegex extends TestAction {
+             for (int groupNumber = 0; groupNumber <= matcher.groupCount(); groupNumber++) {
+
+                 this.writeOutput(String.format(""group%d"", groupNumber), matcher.group(groupNumber));
+
+             }
+
++        } else {
+
++            throw new RuntimeException(""The regular expression didn't match the specified text."");
+
+         }
+
+     }
+
+ }",fix(ExecuteRegex): properly handle failed match,feature,Added error handling to throw an exception when the regular expression does not match the specified text in ExecuteRegex action.
+"diff --git a/src/main/java/com/semanticcms/autogit/servlet/AutoGit.java b/src/main/java/com/semanticcms/autogit/servlet/AutoGit.java
+index <HASH>..<HASH> 100644
+--- a/src/main/java/com/semanticcms/autogit/servlet/AutoGit.java
++++ b/src/main/java/com/semanticcms/autogit/servlet/AutoGit.java
+@@ -22,9 +22,9 @@
+  */
+ package com.semanticcms.autogit.servlet;
+ 
++import com.aoindustries.exception.WrappedException;
+ import com.aoindustries.lang.ProcessResult;
+ import com.aoindustries.lang.Strings;
+-import com.aoindustries.util.WrappedException;
+ import com.semanticcms.autogit.model.GitStatus;
+ import com.semanticcms.autogit.model.State;
+ import com.semanticcms.autogit.model.UncommittedChange;","Moved a few exceptions to the new com.aoindustries.exception package:
+
+NotImplementedException
+WrappedException
+WrappedExceptions",feature,Refactored import statements in AutoGit.java to correctly import WrappedException from com.aoindustries.exception package.
+"diff --git a/src/tuwien/auto/calimero/mgmt/Destination.java b/src/tuwien/auto/calimero/mgmt/Destination.java
+index <HASH>..<HASH> 100644
+--- a/src/tuwien/auto/calimero/mgmt/Destination.java
++++ b/src/tuwien/auto/calimero/mgmt/Destination.java
+@@ -164,6 +164,10 @@ public class Destination
+ 		 */
+ 		public void run()
+ 		{
++			// with keep-alive we do not disconnect on timeout
++			if (d.alive)
++				return;
++
+ 			final int state = d.getState();
+ 			if (state != DISCONNECTED && state != DESTROYED)
+ 				try {",Add partial implementation of keep-alive to not disconnect on timeout,feature,Add keep-alive check to prevent disconnection on timeout in Destination run method
+"diff --git a/alib/src/main/java/net/darkmist/alib/collection/MemCachedStaticSet.java b/alib/src/main/java/net/darkmist/alib/collection/MemCachedStaticSet.java
+index <HASH>..<HASH> 100644
+--- a/alib/src/main/java/net/darkmist/alib/collection/MemCachedStaticSet.java
++++ b/alib/src/main/java/net/darkmist/alib/collection/MemCachedStaticSet.java
+@@ -12,7 +12,7 @@ public class MemCachedStaticSet<T> extends MemCachedRef<Set<T>> implements Set<T
+ {
+ 	protected final T[] array;
+ 
+-	public MemCachedStaticSet(T[] array)
++	public MemCachedStaticSet(T...array)
+ 	{
+ 		this.array = array;
+ 	}",change MemCachedStaticSet to take vargs instead of just an array,feature,Changed MemCachedStaticSet constructor to accept varargs for easier instantiation.
+"diff --git a/src/main/java/com/github/susom/database/Schema.java b/src/main/java/com/github/susom/database/Schema.java
+index <HASH>..<HASH> 100644
+--- a/src/main/java/com/github/susom/database/Schema.java
++++ b/src/main/java/com/github/susom/database/Schema.java
+@@ -844,7 +844,11 @@ public class Schema {
+     for (Table table : tables) {
+       for (Index index : table.indexes) {
+         Sql sql = new Sql();
+-        sql.append(""create index "");
++        sql.append(""create "");
++        if (index.unique) {
++          sql.append(""unique "");
++        }
++        sql.append(""index "");
+         sql.append(index.name);
+         sql.append("" on "");
+         sql.append(table.name);",Actually create unique indexes when Index.unique() is called,feature,Add support for creating unique indexes in schema generation by including UNIQUE keyword in SQL statements when applicable
+"diff --git a/src/java/azkaban/executor/ExecutableFlow.java b/src/java/azkaban/executor/ExecutableFlow.java
+index <HASH>..<HASH> 100644
+--- a/src/java/azkaban/executor/ExecutableFlow.java
++++ b/src/java/azkaban/executor/ExecutableFlow.java
+@@ -89,7 +89,8 @@ public class ExecutableFlow extends ExecutableFlowBase {
+ 	protected void setFlow(Project project, Flow flow) {
+ 		super.setFlow(project, flow);
+ 		executionOptions = new ExecutionOptions();
+-
++		executionOptions.setMailCreator(flow.getMailCreator());
++		
+ 		if (flow.getSuccessEmails() != null) {
+ 			executionOptions.setSuccessEmails(flow.getSuccessEmails());
+ 		}",Fixed bug in ExecutableFlow where we were not setting the MailCreator (which messed up Reportal reports),feature,Set mail creator in execution options from flow to support custom email notifications
+"diff --git a/stats/src/main/java/io/airlift/stats/PauseMeter.java b/stats/src/main/java/io/airlift/stats/PauseMeter.java
+index <HASH>..<HASH> 100644
+--- a/stats/src/main/java/io/airlift/stats/PauseMeter.java
++++ b/stats/src/main/java/io/airlift/stats/PauseMeter.java
+@@ -98,7 +98,7 @@ public class PauseMeter
+ 
+                 long pauseNanos = delta - shortestObservableInterval;
+                 synchronized (histogram) {
+-                    histogram.recordValueWithExpectedInterval(pauseNanos, sleepNanos);
++                    histogram.recordValue(pauseNanos);
+                     totalPauseNanos += pauseNanos;
+                 }
+             }","Don't compensate for ""lost"" measurements
+
+It produces non-intuitive results when measuring actual
+pauses.",feature,Changed PauseMeter to record pause durations without using expected interval in histogram recording.
+"diff --git a/main/java/uk/co/real_logic/sbe/xml/XmlSchemaParser.java b/main/java/uk/co/real_logic/sbe/xml/XmlSchemaParser.java
+index <HASH>..<HASH> 100644
+--- a/main/java/uk/co/real_logic/sbe/xml/XmlSchemaParser.java
++++ b/main/java/uk/co/real_logic/sbe/xml/XmlSchemaParser.java
+@@ -64,8 +64,6 @@ public class XmlSchemaParser
+         throws Exception
+     {
+         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+-        factory.setXIncludeAware(true);
+-        factory.setNamespaceAware(true);
+ 
+         final String xsdFilename = System.getProperty(SbeTool.VALIDATION_XSD);
+         if (xsdFilename != null)",Removed validation of xml namespaces and xinclude.,feature,Remove XInclude and namespace awareness settings from XML parser configuration in XmlSchemaParser.java
+"diff --git a/drools-compiler/src/main/java/org/drools/compiler/kie/builder/impl/KieBuilderImpl.java b/drools-compiler/src/main/java/org/drools/compiler/kie/builder/impl/KieBuilderImpl.java
+index <HASH>..<HASH> 100644
+--- a/drools-compiler/src/main/java/org/drools/compiler/kie/builder/impl/KieBuilderImpl.java
++++ b/drools-compiler/src/main/java/org/drools/compiler/kie/builder/impl/KieBuilderImpl.java
+@@ -300,7 +300,7 @@ public class KieBuilderImpl
+         return getKieModule(false);
+     }
+ 
+-    KieModule getKieModuleIgnoringErrors() {
++    public KieModule getKieModuleIgnoringErrors() {
+         return getKieModule(true);
+     }",allow to get the KieModule from the InternalKieBuilder even if there are errors,feature,Made getKieModuleIgnoringErrors() method public to allow access outside the class.
+"diff --git a/src-setup/org/opencms/setup/CmsAutoSetup.java b/src-setup/org/opencms/setup/CmsAutoSetup.java
+index <HASH>..<HASH> 100644
+--- a/src-setup/org/opencms/setup/CmsAutoSetup.java
++++ b/src-setup/org/opencms/setup/CmsAutoSetup.java
+@@ -111,6 +111,7 @@ public class CmsAutoSetup {
+                 System.out.println(e.getMessage());
+
+                 System.out.println(""Please have a look into the opencms log file for detailed information."");
+
+                 LOG.error(e.getMessage(), e);
+
++                System.exit(1);
+
+             }
+
+         } else {
+
+             System.out.println("""");","Changed return code to 1 for the case where errors happen during
+auto-setup.",feature,Add System.exit(1) to terminate the setup process on error in CmsAutoSetup.java
+"diff --git a/slf4j-api/src/main/java/org/slf4j/event/EventRecodingLogger.java b/slf4j-api/src/main/java/org/slf4j/event/EventRecodingLogger.java
+index <HASH>..<HASH> 100755
+--- a/slf4j-api/src/main/java/org/slf4j/event/EventRecodingLogger.java
++++ b/slf4j-api/src/main/java/org/slf4j/event/EventRecodingLogger.java
+@@ -224,7 +224,7 @@ public class EventRecodingLogger implements Logger {
+     }
+ 
+     public void warn(Marker marker, String format, Object arg) {
+-        recordEvent(Level.WARN, format, new Object[] { arg }, null);
++        recordEvent(Level.WARN, marker, format, new Object[] { arg }, null);
+     }
+ 
+     public void warn(Marker marker, String format, Object arg1, Object arg2) {",SLF4j-<I>: add missing marker in one of the warn methods,feature,Fixed warn method to correctly record events with Marker parameter for improved logging accuracy.
+"diff --git a/src/main/java/io/github/bonigarcia/wdm/webdriver/OptionsWithArguments.java b/src/main/java/io/github/bonigarcia/wdm/webdriver/OptionsWithArguments.java
+index <HASH>..<HASH> 100644
+--- a/src/main/java/io/github/bonigarcia/wdm/webdriver/OptionsWithArguments.java
++++ b/src/main/java/io/github/bonigarcia/wdm/webdriver/OptionsWithArguments.java
+@@ -35,6 +35,8 @@ import org.openqa.selenium.remote.CapabilityType;
+  */
+ public class OptionsWithArguments extends MutableCapabilities {
+ 
++    private static final long serialVersionUID = -5948442823984189597L;
++
+     private String capability;
+ 
+     private List<String> args = new ArrayList<>();",Include generated serial uid in options class,feature,Add serialVersionUID to OptionsWithArguments class for serialization compatibility
+"diff --git a/core/src/main/java/cucumber/api/DataTable.java b/core/src/main/java/cucumber/api/DataTable.java
+index <HASH>..<HASH> 100644
+--- a/core/src/main/java/cucumber/api/DataTable.java
++++ b/core/src/main/java/cucumber/api/DataTable.java
+@@ -143,7 +143,7 @@ public class DataTable {
+      * @param other the other table to diff with.
+      * @throws TableDiffException if the tables are different.
+      */
+-    void diff(DataTable other) throws TableDiffException {
++    public void diff(DataTable other) throws TableDiffException {
+         new TableDiffer(this, other).calculateDiffs();
+     }",Restore ability to diff with another DataTable,feature,Make the diff(DataTable) method public to allow external table comparison and diffing.
+"diff --git a/eclipse-project/src/com/stanfy/utils/ApplicationServiceSupport.java b/eclipse-project/src/com/stanfy/utils/ApplicationServiceSupport.java
+index <HASH>..<HASH> 100644
+--- a/eclipse-project/src/com/stanfy/utils/ApplicationServiceSupport.java
++++ b/eclipse-project/src/com/stanfy/utils/ApplicationServiceSupport.java
+@@ -62,6 +62,7 @@ abstract class ApplicationServiceSupport<T extends IInterface> implements Servic
+    * Destroy the service connection.
+
+    */
+
+   public void unbind() {
+
++    if (serviceObject == null) { return; }
+
+     serviceObject = null;
+
+     final Context context = contextRef.get();
+
+     if (DEBUG) { Log.v(TAG, ""Unbind "" + context); }",do not unbind if we do not have a connection object,feature,Add null check in unbind() method to prevent operations when serviceObject is already null
+"diff --git a/jacorb/src/main/java/org/jboss/as/jacorb/naming/SerializableORB.java b/jacorb/src/main/java/org/jboss/as/jacorb/naming/SerializableORB.java
+index <HASH>..<HASH> 100644
+--- a/jacorb/src/main/java/org/jboss/as/jacorb/naming/SerializableORB.java
++++ b/jacorb/src/main/java/org/jboss/as/jacorb/naming/SerializableORB.java
+@@ -152,7 +152,7 @@ public class SerializableORB extends ORB implements Serializable {
+         return delegate.create_operation_list(oper);
+     }
+ 
+-    @Override
++    //@Override Intellij keeps JDK in front
+     public NVList create_operation_list(OperationDef operationDef) {
+         return delegate.create_operation_list(operationDef);
+     }",Intellij keeps JDK ORB class in front,feature,Commented out @Override annotation on create_operation_list method to avoid JDK conflicts in IntelliJ IDE.
+"diff --git a/bb/RubyVM/src2/com/rho/sync/SyncUtil.java b/bb/RubyVM/src2/com/rho/sync/SyncUtil.java
+index <HASH>..<HASH> 100644
+--- a/bb/RubyVM/src2/com/rho/sync/SyncUtil.java
++++ b/bb/RubyVM/src2/com/rho/sync/SyncUtil.java
+@@ -558,7 +558,7 @@ public class SyncUtil {
+ 			where.add(PerstLiteAdapter.SOURCE_ID, createInteger(id));
+ 			
+ 			adapter.updateIntoTable(createString(SyncConstants.SOURCES_TABLE), values, where);
+-			adapter.deleteAllFromTable(createString(SyncConstants.CLIENT_INFO));			
++			//adapter.deleteAllFromTable(createString(SyncConstants.CLIENT_INFO));			
+ 		}
+ 		
+ 		return true;",Commented out db clear after login on BB to fix loading second copy of data due to new client id,feature,Commented out deletion of all entries from CLIENT_INFO table to preserve client information during sync update.
+"diff --git a/src/main/java/com/yahoo/sketches/theta/HeapQuickSelectSketch.java b/src/main/java/com/yahoo/sketches/theta/HeapQuickSelectSketch.java
+index <HASH>..<HASH> 100644
+--- a/src/main/java/com/yahoo/sketches/theta/HeapQuickSelectSketch.java
++++ b/src/main/java/com/yahoo/sketches/theta/HeapQuickSelectSketch.java
+@@ -41,9 +41,9 @@ class HeapQuickSelectSketch extends HeapUpdateSketch {
+   private final int preambleLongs_;
+   private int lgArrLongs_;
+   private int hashTableThreshold_;  //never serialized
+-  private int curCount_;
+-  private long thetaLong_;
+-  private boolean empty_;
++  int curCount_;
++  long thetaLong_;
++  boolean empty_;
+ 
+   private long[] cache_;","make curCount, thetaLong and empty non final.",feature,"Changed visibility of curCount_, thetaLong_, and empty_ fields from private to package-private in HeapQuickSelectSketch for broader access within the package."
+"diff --git a/core/src/main/java/com/github/gumtreediff/actions/model/Update.java b/core/src/main/java/com/github/gumtreediff/actions/model/Update.java
+index <HASH>..<HASH> 100644
+--- a/core/src/main/java/com/github/gumtreediff/actions/model/Update.java
++++ b/core/src/main/java/com/github/gumtreediff/actions/model/Update.java
+@@ -43,7 +43,7 @@ public class Update extends Action {
+ 
+     @Override
+     public String toString() {
+-        return getName() + "" "" + node.toString() + "" from "" + node.getLabel() + "" to "" + value;
++        return getName() + "" "" + node.toShortString() + "" from "" + node.getLabel() + "" to "" + value;
+     }
+ 
+     @Override",replace toString by toShortString. fix #<I>,feature,Improve Update action's toString method to use node's short string representation for concise output.
+"diff --git a/src/main/java/io/minio/objectstorage/client/messages/ListPartsResult.java b/src/main/java/io/minio/objectstorage/client/messages/ListPartsResult.java
+index <HASH>..<HASH> 100644
+--- a/src/main/java/io/minio/objectstorage/client/messages/ListPartsResult.java
++++ b/src/main/java/io/minio/objectstorage/client/messages/ListPartsResult.java
+@@ -71,6 +71,14 @@ public class ListPartsResult extends XmlEntity {
+ 	this.storageClass = storageClass;
+     }
+ 
++    public Initiator getInitiator() {
++	return initiator;
++    }
++
++    public void setInitiator(Initiator initiator) {
++	this.initiator = initiator;
++    }
++
+     public Owner getOwner() {
+ 	return owner;
+     }",Add missing get/setInitiator functions from previous commit,feature,Add getter and setter methods for the Initiator field in ListPartsResult class to manage initiator information.
+"diff --git a/src/net/jeremybrooks/jinx/api/FavoritesApi.java b/src/net/jeremybrooks/jinx/api/FavoritesApi.java
+index <HASH>..<HASH> 100644
+--- a/src/net/jeremybrooks/jinx/api/FavoritesApi.java
++++ b/src/net/jeremybrooks/jinx/api/FavoritesApi.java
+@@ -252,7 +252,7 @@ public class FavoritesApi {
+ 	    params.put(""page"", Integer.toString(page));
+ 	}
+ 
+-	Document doc = Jinx.getInstance().callFlickr(params);
++	Document doc = Jinx.getInstance().callFlickr(params, false);
+ 
+ 	return PhotosApi.getInstance().parsePhotosXml(doc);
+     }",Added Serializable. Fixed a method that did not require authentication.,feature,Changed call to Flickr API in FavoritesApi to include a parameter disabling caching.
+"diff --git a/platform/bb/rhodes/src/com/rho/location/GeoLocationAsync.java b/platform/bb/rhodes/src/com/rho/location/GeoLocationAsync.java
+index <HASH>..<HASH> 100644
+--- a/platform/bb/rhodes/src/com/rho/location/GeoLocationAsync.java
++++ b/platform/bb/rhodes/src/com/rho/location/GeoLocationAsync.java
+@@ -34,6 +34,8 @@ public class GeoLocationAsync {
+ 					  m_lon = coord.getLongitude();
+ 					  m_bDetermined = true;
+ 					}
++					LOG.TRACE(""GetLocation - latitude: "" + Double.toString(m_lat));
++					LOG.TRACE(""GetLocation - longitude: "" + Double.toString(m_lon));
+ 				}else
+ 					LOG.INFO(""GetLocation - getQualifiedCoordinates: return null."");
+ 			}else",Add more log tracing to BB GPS implementation,feature,Add detailed TRACE logging for latitude and longitude values in GeoLocationAsync to improve location debugging.
+"diff --git a/redisson/src/main/java/org/redisson/pubsub/AsyncSemaphore.java b/redisson/src/main/java/org/redisson/pubsub/AsyncSemaphore.java
+index <HASH>..<HASH> 100644
+--- a/redisson/src/main/java/org/redisson/pubsub/AsyncSemaphore.java
++++ b/redisson/src/main/java/org/redisson/pubsub/AsyncSemaphore.java
+@@ -76,7 +76,7 @@ public class AsyncSemaphore {
+         
+     }
+     
+-    private int counter;
++    private volatile int counter;
+     private final Set<Entry> listeners = new LinkedHashSet<Entry>();
+ 
+     public AsyncSemaphore(int permits) {",Fixed - AsyncSemaphore counter field should be volatile. #<I>,feature,Make the counter field in AsyncSemaphore volatile to ensure thread-safe visibility of updates.
+"diff --git a/findbugs/src/java/edu/umd/cs/findbugs/ba/BasicBlock.java b/findbugs/src/java/edu/umd/cs/findbugs/ba/BasicBlock.java
+index <HASH>..<HASH> 100644
+--- a/findbugs/src/java/edu/umd/cs/findbugs/ba/BasicBlock.java
++++ b/findbugs/src/java/edu/umd/cs/findbugs/ba/BasicBlock.java
+@@ -64,7 +64,7 @@ public class BasicBlock implements Comparable, Debug {
+ 		nullCheckInstructionSet.set(Constants.SASTORE);
+ 		nullCheckInstructionSet.set(Constants.MONITORENTER);
+ 		nullCheckInstructionSet.set(Constants.MONITOREXIT);
+-		nullCheckInstructionSet.set(Constants.ATHROW);
++		//nullCheckInstructionSet.set(Constants.ATHROW);
+ 		// Any others?
+ 	}","Don't add ATHROW to null check instruction set - causes problems
+in CFG construction.  Need to investigate.
+
+
+git-svn-id: <URL>",feature,Disabled null check for ATHROW instruction in BasicBlock to refine null check behavior.
+"diff --git a/src/main/java/com/relayrides/pushy/apns/ApnsClient.java b/src/main/java/com/relayrides/pushy/apns/ApnsClient.java
+index <HASH>..<HASH> 100644
+--- a/src/main/java/com/relayrides/pushy/apns/ApnsClient.java
++++ b/src/main/java/com/relayrides/pushy/apns/ApnsClient.java
+@@ -205,6 +205,8 @@ public class ApnsClient<T extends ApnsPushNotification> {
+         });
+     }
+ 
++    // TODO Expose connection/handshake timeout settings
++
+     /**
+      * <p>Connects to the given APNs gateway on the default (HTTPS) port ({@value DEFAULT_APNS_PORT}).</p>
+      *",Added a TODO for connection timeouts.,feature,Add TODO comment to expose connection and handshake timeout settings in ApnsClient.java
+"diff --git a/ninio-core/src/main/java/com/davfx/ninio/core/InMemoryCache.java b/ninio-core/src/main/java/com/davfx/ninio/core/InMemoryCache.java
+index <HASH>..<HASH> 100644
+--- a/ninio-core/src/main/java/com/davfx/ninio/core/InMemoryCache.java
++++ b/ninio-core/src/main/java/com/davfx/ninio/core/InMemoryCache.java
+@@ -306,6 +306,10 @@ public final class InMemoryCache {
+ 				}
+ 				
+ 				data = subs.data;
++				
++				if (data != null) {
++					send = false;
++				}
+ 
+ 				if (send || (data == null)) {
+ 					subs.subs.put(context.sub, null);",InMemoryCache: No request send when data is available,feature,Changed InMemoryCache to prevent sending data when cached data is already available by setting send to false if data is not null.
+"diff --git a/Tests/test/org/bimserver/tests/AllTests.java b/Tests/test/org/bimserver/tests/AllTests.java
+index <HASH>..<HASH> 100644
+--- a/Tests/test/org/bimserver/tests/AllTests.java
++++ b/Tests/test/org/bimserver/tests/AllTests.java
+@@ -94,7 +94,7 @@ public class AllTests {
+ 		BimServerConfig config = new BimServerConfig();
+
+ 		config.setHomeDir(home);
+
+ 		config.setStartEmbeddedWebServer(true);
+
+-		config.setPort(8080);
+
++		config.setPort(7010);
+
+ 		config.setResourceFetcher(new LocalDevelopmentResourceFetcher(Paths.get(""../"")));
+
+ 		config.setClassPath(System.getProperty(""java.class.path""));",Changed test port to <I>,feature,Changed default server port from 8080 to 7010 in test configuration to avoid conflicts.
+"diff --git a/src/org/jgroups/protocols/pbcast/FLUSH.java b/src/org/jgroups/protocols/pbcast/FLUSH.java
+index <HASH>..<HASH> 100644
+--- a/src/org/jgroups/protocols/pbcast/FLUSH.java
++++ b/src/org/jgroups/protocols/pbcast/FLUSH.java
+@@ -548,8 +548,8 @@ public class FLUSH extends Protocol {
+     }
+     
+     private void sendUnBlockUpToChannel() {
+-        up_prot.up(new Event(Event.UNBLOCK));
+         sentBlock.set(false);
++        up_prot.up(new Event(Event.UNBLOCK));       
+     }
+ 
+     private boolean isCurrentFlushMessage(FlushHeader fh) {",eliminating thread race that removed BLOCK/UNBLOCK events in certain cases,feature,Reordered event sending and flag reset in sendUnBlockUpToChannel() to ensure UNBLOCK event is sent after clearing sentBlock flag.
+"diff --git a/thin/base/db/base/src/main/java/org/jbundle/thin/base/db/Constants.java b/thin/base/db/base/src/main/java/org/jbundle/thin/base/db/Constants.java
+index <HASH>..<HASH> 100644
+--- a/thin/base/db/base/src/main/java/org/jbundle/thin/base/db/Constants.java
++++ b/thin/base/db/base/src/main/java/org/jbundle/thin/base/db/Constants.java
+@@ -146,7 +146,6 @@ public interface Constants extends Constant
+     public static final int PREVIOUS_RECORD = -1;
+     /**
+      * The TEMP_KEY_AREA are a temporary copy of the fields that belong to a key.
+-     * @see FILE_KEY_AREA.
+      */
+     public static final int TEMP_KEY_AREA = 1;",Update external repo to include correct soap archives,feature,Removed redundant @see FILE_KEY_AREA comment from TEMP_KEY_AREA constant in Constants interface.
+"diff --git a/src/test/java/com/brettonw/bag/BagArrayTest.java b/src/test/java/com/brettonw/bag/BagArrayTest.java
+index <HASH>..<HASH> 100644
+--- a/src/test/java/com/brettonw/bag/BagArrayTest.java
++++ b/src/test/java/com/brettonw/bag/BagArrayTest.java
+@@ -182,7 +182,7 @@ public class BagArrayTest {
+         BagObject bagObject = new BagObject ()
+                 .put (""a"", new BagArray ()
+                         .add (new BagObject ()
+-                            .put (""x"", ""y"")
++                                .put (""x"", ""y"")
+                         )
+                 );
+         AppTest.report (bagObject.getString (""a/#first/x""), ""y"", ""Hierarchical indexing of arrays using strings - 1"");",and a teensy bit more cleanup,feature,fix indentation in BagArrayTest to improve code readability
+"diff --git a/emoji/src/main/java/com/vanniktech/emoji/EmojiManager.java b/emoji/src/main/java/com/vanniktech/emoji/EmojiManager.java
+index <HASH>..<HASH> 100644
+--- a/emoji/src/main/java/com/vanniktech/emoji/EmojiManager.java
++++ b/emoji/src/main/java/com/vanniktech/emoji/EmojiManager.java
+@@ -71,7 +71,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
+     // No instances apart from singleton.
+   }
+ 
+-  static EmojiManager getInstance() {
++  public static EmojiManager getInstance() {
+     return INSTANCE;
+   }",Expose instance so that can access replaceWithImages from external packages (#<I>),feature,Made getInstance() method of EmojiManager publicly accessible to allow external access to the singleton instance.
+"diff --git a/android/src/com/google/zxing/client/android/ViewfinderView.java b/android/src/com/google/zxing/client/android/ViewfinderView.java
+index <HASH>..<HASH> 100755
+--- a/android/src/com/google/zxing/client/android/ViewfinderView.java
++++ b/android/src/com/google/zxing/client/android/ViewfinderView.java
+@@ -155,7 +155,11 @@ public final class ViewfinderView extends View {
+   }
+ 
+   public void drawViewfinder() {
+-    resultBitmap = null;
++    Bitmap resultBitmap = this.resultBitmap;
++    this.resultBitmap = null;
++    if (resultBitmap != null) {
++      resultBitmap.recycle();
++    }
+     invalidate();
+   }","Fixed potential bug in not recycling bitmaps that I spied from BS+
+
+git-svn-id: <URL>",feature,Added bitmap recycling in drawViewfinder() to properly release previous resultBitmap resources before resetting.
+"diff --git a/sentry-core/src/main/java/io/sentry/core/Sentry.java b/sentry-core/src/main/java/io/sentry/core/Sentry.java
+index <HASH>..<HASH> 100644
+--- a/sentry-core/src/main/java/io/sentry/core/Sentry.java
++++ b/sentry-core/src/main/java/io/sentry/core/Sentry.java
+@@ -35,9 +35,10 @@ public final class Sentry {
+     }
+     IHub hub = currentHub.get();
+     if (hub == null) {
+-      currentHub.set(mainHub.clone());
++      hub = mainHub.clone();
++      currentHub.set(hub);
+     }
+-    return currentHub.get();
++    return hub;
+   }
+ 
+   /**",Avoid getting a threadlocal twice. (getsentry/sentry-android#<I>),feature,Fix potential null return by setting and returning cloned hub instance in Sentry#getCurrentHub method.
+"diff --git a/plugins/storage/hbase/src/test/java/org/mwg/StorageTest.java b/plugins/storage/hbase/src/test/java/org/mwg/StorageTest.java
+index <HASH>..<HASH> 100644
+--- a/plugins/storage/hbase/src/test/java/org/mwg/StorageTest.java
++++ b/plugins/storage/hbase/src/test/java/org/mwg/StorageTest.java
+@@ -1,11 +1,8 @@
+ package org.mwg;
+ 
+-import javafx.util.Callback;
+-import org.junit.Test;
+ import org.mwg.core.scheduler.NoopScheduler;
+ import org.mwg.plugin.Job;
+ 
+-import java.io.File;
+ import java.io.IOException;
+ 
+ public class StorageTest {",delete unused dependency test (failure on bench server),feature,Remove unused imports from StorageTest.java to clean up the test code.
+"diff --git a/rest/src/main/java/org/opennms/newts/rest/NewtsDaemon.java b/rest/src/main/java/org/opennms/newts/rest/NewtsDaemon.java
+index <HASH>..<HASH> 100644
+--- a/rest/src/main/java/org/opennms/newts/rest/NewtsDaemon.java
++++ b/rest/src/main/java/org/opennms/newts/rest/NewtsDaemon.java
+@@ -75,7 +75,6 @@ public class NewtsDaemon {
+         }
+ 
+         File pidFile = new File(cmdLine.getPidFilename());
+-        pidFile.deleteOnExit();
+ 
+         // Daemonize?
+         if (cmdLine.isDaemon()) {","NEWTS-<I>: remove redundant deleteOnExit
+
+No need; Gressil does this for us",feature,Remove automatic deletion of PID file on JVM exit in NewtsDaemon to retain PID file after shutdown.
+"diff --git a/src/org/citygml4j/model/common/association/Associable.java b/src/org/citygml4j/model/common/association/Associable.java
+index <HASH>..<HASH> 100644
+--- a/src/org/citygml4j/model/common/association/Associable.java
++++ b/src/org/citygml4j/model/common/association/Associable.java
+@@ -1,5 +1,7 @@
+ package org.citygml4j.model.common.association;
+ 
+-public interface Associable {
++import org.citygml4j.model.common.base.ModelObject;
++
++public interface Associable extends ModelObject {
+ 
+ }",ensured that only ModelObjects can be Associables,feature,Extend Associable interface to inherit from ModelObject for enhanced type consistency.
+"diff --git a/plugin/src/main/java/io/fabric8/maven/plugin/util/KubernetesResourceUtil.java b/plugin/src/main/java/io/fabric8/maven/plugin/util/KubernetesResourceUtil.java
+index <HASH>..<HASH> 100644
+--- a/plugin/src/main/java/io/fabric8/maven/plugin/util/KubernetesResourceUtil.java
++++ b/plugin/src/main/java/io/fabric8/maven/plugin/util/KubernetesResourceUtil.java
+@@ -118,6 +118,7 @@ public class KubernetesResourceUtil {
+     static {
+         String mapping[] =
+             {
++                ""service"", ""Service"",
+                 ""svc"", ""Service"",
+                 ""rc"", ""ReplicationController"",
+                 ""rs"", ""ReplicaSet""",lets allow 'service' as a file kind in addition to 'svc',feature,"Add ""service"" alias mapping to Kubernetes resource kind resolution in KubernetesResourceUtil.java"
+"diff --git a/src/test/java/org/influxdb/InfluxDBTest.java b/src/test/java/org/influxdb/InfluxDBTest.java
+index <HASH>..<HASH> 100644
+--- a/src/test/java/org/influxdb/InfluxDBTest.java
++++ b/src/test/java/org/influxdb/InfluxDBTest.java
+@@ -71,6 +71,7 @@ public class InfluxDBTest {
+ 			Thread.sleep(100L);
+ 		} while (!influxDBstarted);
+ 		this.influxDB.setLogLevel(LogLevel.NONE);
++		System.out.println(""Connected to InfluxDB Version: "" + this.influxDB.version());
+ 	}
+ 
+ 	/**
+@@ -476,6 +477,5 @@ public class InfluxDBTest {
+ 	public void testVersion() {
+ 		String version = this.influxDB.version();
+ 		Assert.assertNotNull(version);
+-		System.out.println(""Version: "" + version);
+ 	}
+ }",Print the InfluxDB Version used for unit-test.,feature,Add console output to InfluxDBTest to print connected InfluxDB version upon startup for better visibility during tests
+"diff --git a/sonar-core/src/main/java/org/sonar/core/issue/db/IssueStorage.java b/sonar-core/src/main/java/org/sonar/core/issue/db/IssueStorage.java
+index <HASH>..<HASH> 100644
+--- a/sonar-core/src/main/java/org/sonar/core/issue/db/IssueStorage.java
++++ b/sonar-core/src/main/java/org/sonar/core/issue/db/IssueStorage.java
+@@ -142,7 +142,7 @@ public abstract class IssueStorage {
+       }
+     }
+     FieldDiffs diffs = issue.currentChange();
+-    if (diffs != null) {
++    if (!issue.isNew() && diffs != null) {
+       IssueChangeDto changeDto = IssueChangeDto.of(issue.key(), diffs);
+       mapper.insert(changeDto);
+     }",SONAR-<I> do not insert changelog when issue is new,feature,Add condition to skip inserting issue changes for new issues in IssueStorage to avoid redundant change records
+"diff --git a/src/test/java/org/dita/dost/util/JobTest.java b/src/test/java/org/dita/dost/util/JobTest.java
+index <HASH>..<HASH> 100644
+--- a/src/test/java/org/dita/dost/util/JobTest.java
++++ b/src/test/java/org/dita/dost/util/JobTest.java
+@@ -72,8 +72,8 @@ public final class JobTest {
+     }
+ 
+     @Test
+-    public void testGetValue() {
+-        assertEquals(new File(""/foo/bar"").toURI(), job.getInputDir());
++    public void testGetValue() throws URISyntaxException {
++        assertEquals(new URI(""file:/foo/bar""), job.getInputDir());
+     }
+ 
+     @AfterClass",Simplify Job unit test to not rely on File,feature,Updated testGetValue() in JobTest to use URI comparison for input directory validation instead of File URI conversion.
+"diff --git a/rapidoid-sql/src/main/java/org/rapidoid/sql/SQL.java b/rapidoid-sql/src/main/java/org/rapidoid/sql/SQL.java
+index <HASH>..<HASH> 100644
+--- a/rapidoid-sql/src/main/java/org/rapidoid/sql/SQL.java
++++ b/rapidoid-sql/src/main/java/org/rapidoid/sql/SQL.java
+@@ -58,7 +58,6 @@ public class SQL {
+ 			DEFAULT.driver(driver);
+ 			DEFAULT.user(username);
+ 			DEFAULT.password(password);
+-			DEFAULT.pooled();
+ 
+ 			String maskedPassword = U.isEmpty(password) ? ""<empty>"" : ""<specified>"";
+ 			Log.info(""Initialized the default JDBC/SQL API"", ""url"", url, ""driver"", driver, ""username"", username,",The SQL API will not be pooled by default.,feature,Removed default connection pooling initialization from the SQL class configuration.

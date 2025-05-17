@@ -11,11 +11,13 @@ load_dotenv()
 import os
 import pandas as pd
 
+import time
+
 
 
 # Run Inference on the dataset samples using the OpenAI clients
 # and save the results to a new CSV file
-def run_open_ai_inference_on_dataset(dataset_path,output_path,model):
+def run_open_ai_inference_on_dataset(dataset_path,output_path,model,prompts_list):
     # Initialize the OpenAI clients
     openai_client = OpenAIClient(model=model)
 
@@ -32,6 +34,10 @@ def run_open_ai_inference_on_dataset(dataset_path,output_path,model):
         expected_message = row['message']
 
         for prompt_name, template in PROMPTS.items():
+            # Skip the prompt styles that are not in the list
+            if prompt_name not in prompts_list:
+                continue
+
             print(f"\n--- Prompt Style: {prompt_name} ---")
 
             openai_message = ''
@@ -50,7 +56,8 @@ def run_open_ai_inference_on_dataset(dataset_path,output_path,model):
                 'inference_message': openai_message,
             })
 
-            break  # Break after the first prompt style only zero_shot
+            time.sleep(4.5)  # ~13 requests per minute (safer than 15)
+            # break  # Break after the first prompt style only zero_shot
 
     # Save results to a new DataFrame
     results_df = pd.DataFrame(results)
@@ -66,7 +73,7 @@ def run_open_ai_inference_on_dataset(dataset_path,output_path,model):
 
 # Run Inference on the dataset samples using the OpenAI clients
 # and save the results to a new CSV file
-def run_gemini_inference_on_dataset(dataset_path,output_path,model):
+def run_gemini_inference_on_dataset(dataset_path,output_path,model,prompts_list):
     # Initialize the Gemini clients
     gemini_client = GeminiClient(model=model)
 
@@ -84,6 +91,10 @@ def run_gemini_inference_on_dataset(dataset_path,output_path,model):
         expected_message = row['message']
 
         for prompt_name, template in PROMPTS.items():
+            # Skip the prompt styles that are not in the list
+            if prompt_name not in prompts_list:
+                continue
+
             print(f"\n--- Prompt Style: {prompt_name} ---")
 
             gemini_message = ''
@@ -102,7 +113,10 @@ def run_gemini_inference_on_dataset(dataset_path,output_path,model):
                 'inference_message': gemini_message,
             })
 
-            break  # Break after the first prompt style only zero_shot
+            # After each API call
+            time.sleep(4.5)  # ~13 requests per minute (safer than 15)
+
+            # break  # Break after the first prompt style only zero_shot
 
     # Save results to a new DataFrame
     results_df = pd.DataFrame(results)
@@ -127,46 +141,53 @@ if __name__ == "__main__":
     # #  Test(1) Java vs OpenAI gpt-3.5-turbo
     # dataset_path = 'dataset/samples/java.csv'
     # open_ai_model = 'gpt-3.5-turbo'
-    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{open_ai_model}.csv"
+    # # open_ai_model = 'gpt-4.1-mini'
+    # prompt_name = 'zero_shot'
+    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
     # # Run inference on the dataset
-    # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model,prompts_list=[prompt_name])
     
     # #  Test(2) Java vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/java.csv'
     # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{gemini_model}.csv"
+    # # prompt_name = 'feature'
+    # prompt_name = 'zero_shot'
+    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{gemini_model}_{prompt_name}.csv"
 
     # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model,prompts_list=[prompt_name])
 
 
 
     # ###################################################################################################################
     # ####################################################### Python ####################################################
-    # ###################################################################################################################    
+    # ##################################################################################################################    
     # # Python
     # print("Running inference on the python dataset...")
     
 
-    # # #  Test(1) Python vs OpenAI gpt-3.5-turbo
-    # # dataset_path = 'dataset/samples/py.csv'
+    # #  Test(1) Python vs OpenAI gpt-3.5-turbo
+    # dataset_path = 'dataset/samples/py.csv'
     # # open_ai_model = 'gpt-3.5-turbo'
-    # # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{open_ai_model}_zero_shot_only.csv"
+    # open_ai_model = 'gpt-4.1-mini'
+    # # prompt_name = 'feature'
+    # prompt_name = 'zero_shot'
+    # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
-    # # # Run inference on the dataset
-    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    # # Run inference on the dataset
+    # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model,prompts_list=[prompt_name])
     
     # #  Test(2) Python vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/py.csv'
     # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{gemini_model}_zero_shot_only.csv"
+    # prompt_name = 'feature'
+    # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{gemini_model}_{prompt_name}.csv"
 
     # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model,prompts_list=[prompt_name])
 
 
-    
 
     # ###################################################################################################################
     # ######################################################### JS ######################################################
@@ -175,21 +196,25 @@ if __name__ == "__main__":
     # print("Running inference on the javascript dataset...")
     
 
-    # # #  Test(1) JavaScript vs OpenAI gpt-3.5-turbo
-    # # dataset_path = 'dataset/samples/js.csv'
+    # #  Test(1) JavaScript vs OpenAI gpt-3.5-turbo
+    # dataset_path = 'dataset/samples/js.csv'
     # # open_ai_model = 'gpt-3.5-turbo'
-    # # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{open_ai_model}_zero_shot_only.csv"
+    # open_ai_model = 'gpt-4.1-mini'
+    # # prompt_name = 'feature'
+    # prompt_name = 'zero_shot'
+    # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
-    # # # Run inference on the dataset
-    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    # # Run inference on the dataset
+    # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model,prompts_list=[prompt_name])
     
     # #  Test(2) JavaScript vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/js.csv'
     # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{gemini_model}_zero_shot_only.csv"
+    # prompt_name = 'feature'
+    # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{gemini_model}_{prompt_name}.csv"
 
     # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model,prompts_list=[prompt_name])
 
     
 
@@ -201,18 +226,22 @@ if __name__ == "__main__":
     # print("Running inference on the PHP dataset...")
     
 
-    # # #  Test(1) PHP vs OpenAI gpt-3.5-turbo
-    # # dataset_path = 'dataset/samples/php.csv'
+    # #  Test(1) PHP vs OpenAI gpt-3.5-turbo
+    # dataset_path = 'dataset/samples/php.csv'
     # # open_ai_model = 'gpt-3.5-turbo'
-    # # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{open_ai_model}_zero_shot_only.csv"
+    # open_ai_model = 'gpt-4.1-mini'
+    # # prompt_name = 'feature'
+    # prompt_name = 'zero_shot'
+    # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
-    # # # Run inference on the dataset
-    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    # # Run inference on the dataset
+    # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model,prompts_list=[prompt_name])
     
     # #  Test(2) PHP vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/php.csv'
     # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{gemini_model}_zero_shot_only.csv"
+    # prompt_name = 'feature'
+    # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{gemini_model}_{prompt_name}.csv"
 
     # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model,prompts_list=[prompt_name])
