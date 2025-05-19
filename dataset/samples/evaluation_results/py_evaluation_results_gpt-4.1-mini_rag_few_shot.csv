@@ -1,0 +1,721 @@
+diff,expected_message,prompt_style,inference_message
+"diff --git a/ykman/cli/oath.py b/ykman/cli/oath.py
+index <HASH>..<HASH> 100644
+--- a/ykman/cli/oath.py
++++ b/ykman/cli/oath.py
+@@ -87,6 +87,20 @@ def click_parse_uri(ctx, param, val):
+ def oath(ctx, password):
+     """"""
+     Manage OATH Application.
++
++    Examples:
++
++    \b
++      Generate codes for all credentials:
++      $ ykman oath code
++
++    \b
++      Add a touch credential with the secret key f5up4ub3dw and the name yubico:
++      $ ykman oath add yubico f5up4ub3dw --touch
++
++    \b
++      Set a password for the OATH application:
++      $ ykman oath set-password
+     """"""
+     try:
+         controller = OathController(ctx.obj['dev'].driver)",help: add examples for oath commands,rag_few_shot,oath: add usage examples to oath command help text
+"diff --git a/py/test/selenium/webdriver/common/interactions_tests.py b/py/test/selenium/webdriver/common/interactions_tests.py
+index <HASH>..<HASH> 100644
+--- a/py/test/selenium/webdriver/common/interactions_tests.py
++++ b/py/test/selenium/webdriver/common/interactions_tests.py
+@@ -161,6 +161,7 @@ def testClickingOnFormElements(driver, pages):
+     assert ""roquefort parmigiano cheddar"" == resultElement.text
+ 
+ 
++@pytest.mark.xfail_firefox
+ def testSelectingMultipleItems(driver, pages):
+     """"""Copied from org.openqa.selenium.interactions.CombinedInputActionsTest.""""""
+     pages.load(""selectableItems.html"")",[py] Disable interaction test failing in firefox,rag_few_shot,[py] Mark testSelectingMultipleItems as xfail on Firefox due to known failure
+"diff --git a/udata/commands/__init__.py b/udata/commands/__init__.py
+index <HASH>..<HASH> 100644
+--- a/udata/commands/__init__.py
++++ b/udata/commands/__init__.py
+@@ -11,9 +11,12 @@ from glob import iglob
+ from flask.ext.script import Manager
+ from flask.ext.script.commands import Clean, ShowUrls, Server
+ 
+-
+ from udata.app import create_app, standalone
+ 
++# Expect an utf8 compatible terminal
++reload(sys)
++sys.setdefaultencoding('utf8')
++
+ log = logging.getLogger(__name__)
+ 
+ manager = Manager()",Expect an utf8-compatible terminal by default,rag_few_shot,set default encoding to utf8 for terminal compatibility in command manager initialization
+"diff --git a/hotdoc/extensions/gi_extension.py b/hotdoc/extensions/gi_extension.py
+index <HASH>..<HASH> 100644
+--- a/hotdoc/extensions/gi_extension.py
++++ b/hotdoc/extensions/gi_extension.py
+@@ -639,7 +639,6 @@ class GIWizard(HotdocWizard):
+         try:
+             choice = self.propose_choice(
+                     [""Create index from a gtk-doc project"",
+-                    ""Generate index from scratch"",
+                     ],
+                     extra_prompt=PROMPT_GI_INDEX
+                     )",Wizard: don't propose a not implemented choice,rag_few_shot,"wizard: remove unimplemented ""Generate index from scratch"" choice"
+"diff --git a/scapy/layers/inet6.py b/scapy/layers/inet6.py
+index <HASH>..<HASH> 100644
+--- a/scapy/layers/inet6.py
++++ b/scapy/layers/inet6.py
+@@ -272,8 +272,7 @@ ipv6nhcls = {  0: ""IPv6ExtHdrHopByHop"",
+               #51: ""IPv6ExtHdrAH"",
+                58: ""ICMPv6Unknown"", 
+                59: ""Raw"",
+-               60: ""IPv6ExtHdrDestOpt"",
+-            }
++               60: ""IPv6ExtHdrDestOpt""}
+ 
+ class IP6ListField(StrField):
+     islist = 1",Changes made according to Pierre Lalet's comment,rag_few_shot,Fix dictionary closing brace formatting in ipv6nhcls mapping in inet6.py
+"diff --git a/hexdi/__init__.py b/hexdi/__init__.py
+index <HASH>..<HASH> 100644
+--- a/hexdi/__init__.py
++++ b/hexdi/__init__.py
+@@ -31,6 +31,7 @@ from hexdi import finder
+ import hexdi.core
+ # Quick access imports
+ from hexdi.decorator import component, permanent, transient, dependency, inject
++from hexdi.core import get_root_container
+ 
+ 
+ # Shortcut functions",Fixed root container resolving in hexdi module,rag_few_shot,Added get_root_container import to hexdi __init__ for quick access
+"diff --git a/tinymce/widgets.py b/tinymce/widgets.py
+index <HASH>..<HASH> 100644
+--- a/tinymce/widgets.py
++++ b/tinymce/widgets.py
+@@ -90,12 +90,7 @@ def get_spellcheck_config():
+     """"""
+     config = {}
+     if mce_settings.USE_SPELLCHECKER:
+-        try:
+-            from enchant import list_languages
+-        except ImportError as ex:
+-            raise ImportError(
+-                'To use spellchecker you need to install pyenchant first!'
+-            ).with_traceback(ex.__traceback__)
++        from enchant import list_languages
+         enchant_languages = list_languages()
+         if settings.DEBUG:
+             logger.info('Enchant languages: {0}'.format(enchant_languages))",Remove re-raising ImportError on missing pyenchant,rag_few_shot,Remove redundant ImportError handling when importing enchant.list_languages
+"diff --git a/sixpack/server.py b/sixpack/server.py
+index <HASH>..<HASH> 100644
+--- a/sixpack/server.py
++++ b/sixpack/server.py
+@@ -72,7 +72,7 @@ class Sixpack(object):
+              |     ||     ||     |-'
+              |     ||     ||     |
+              |     ||     ||     |
+-             `-_-'  `-_-'  `-_-'
++              `-_-'  `-_-'  `-_-'
+         https://github.com/seatgeek/sixpack""""""
+         return Response(dales)",Fixing the ASCII art.  Very Important of course.,rag_few_shot,Fix ASCII art indentation in server.py for correct display
+"diff --git a/bulbs/content/models.py b/bulbs/content/models.py
+index <HASH>..<HASH> 100644
+--- a/bulbs/content/models.py
++++ b/bulbs/content/models.py
+@@ -415,7 +415,7 @@ class Content(PolymorphicIndexable, PolymorphicModel):
+         return strip_tags(self.title)
+ 
+     def save(self, *args, **kwargs):
+-        if self.slug is None:
++        if not self.slug:
+             self.slug = slugify(self.build_slug())[:self._meta.get_field('slug').max_length]
+ 
+         return super(Content, self).save(*args, **kwargs)",Regen content slug when it's blank,rag_few_shot,Check slug presence with `if not self.slug` instead of `if self.slug is None` in Content.save()
+"diff --git a/twstock/codes.py b/twstock/codes.py
+index <HASH>..<HASH> 100644
+--- a/twstock/codes.py
++++ b/twstock/codes.py
+@@ -28,7 +28,7 @@ def read_csv(path, types):
+         reader = csv.reader(csvfile)
+         csvfile.readline()
+         for row in reader:
+-            row = ROW(*row)
++            row = ROW(*(item.strip() for item in row))
+             codes[row.code] = row
+             if types == 'tpex':
+                 tpex[row.code] = row","Strip all fields for StockCodeInfo (#<I>)
+
+* Strip all fields",rag_few_shot,Strip whitespace from all CSV fields when reading stock codes (#<I>)
+"diff --git a/src/idp_test/base.py b/src/idp_test/base.py
+index <HASH>..<HASH> 100644
+--- a/src/idp_test/base.py
++++ b/src/idp_test/base.py
+@@ -215,7 +215,7 @@ class Conversation(tool.Conversation):
+                 pass
+             self.trace.info(""SAML Response: %s"" % _resp)
+         except Exception, err:
+-            self.trace.debug(""Faulty response: %s"" % response)
++            self.trace.info(""Faulty response: %s"" % response)
+             self.trace.error(""Exception %s"" % err)
+             self.err_check(""exception"", err)",Trace doesn't have any debug method.,rag_few_shot,Change faulty response log level from debug to info in Conversation class
+"diff --git a/angr/analyses/sleakslice.py b/angr/analyses/sleakslice.py
+index <HASH>..<HASH> 100644
+--- a/angr/analyses/sleakslice.py
++++ b/angr/analyses/sleakslice.py
+@@ -31,7 +31,7 @@ class Sleakslice(SleakMeta):
+         if len(self.targets) == 0:
+             raise SleakError(""No targets specified"")
+ 
+-        self.cfg = self._p.analyses.CFG()
++        self.cfg = self._p.analyses.CFG(keep_input_state=True)
+         self.ddg = self._p.analyses.DDG(self.cfg)
+         self.cdg = self._p.analyses.CDG(cfg=self.cfg)",Sleak: keep input states in the new CFG,rag_few_shot,Sleak: enable keep_input_state in CFG construction for Sleakslice analysis
+"diff --git a/src/ploneintranet/workspace/tests/base.py b/src/ploneintranet/workspace/tests/base.py
+index <HASH>..<HASH> 100644
+--- a/src/ploneintranet/workspace/tests/base.py
++++ b/src/ploneintranet/workspace/tests/base.py
+@@ -84,4 +84,4 @@ class FunctionalBaseTestCase(BaseTestCase):
+         self.browser.getControl(name='__ac_name').value = SITE_OWNER_NAME
+         self.browser.getControl(name='__ac_password').value = \
+             SITE_OWNER_PASSWORD
+-        self.browser.getControl(name='submit').click()
++        self.browser.getForm(id='login_form').submit()",make sure we do not submit the search-form when logging in,rag_few_shot,use form submission instead of clicking submit button in login test helper
+"diff --git a/tutorial/PythOnBoardingBot/app.py b/tutorial/PythOnBoardingBot/app.py
+index <HASH>..<HASH> 100644
+--- a/tutorial/PythOnBoardingBot/app.py
++++ b/tutorial/PythOnBoardingBot/app.py
+@@ -94,7 +94,7 @@ def update_emoji(payload):
+ 
+ # =============== Pin Added Events ================ #
+ # When a users pins a message the type of the event will be 'pin_added'.
+-# Here we'll link the update_pin callback to the 'reaction_added' event.
++# Here we'll link the update_pin callback to the 'pin_added' event.
+ @slack_events_adapter.on(""pin_added"")
+ def update_pin(payload):
+     """"""Update the onboarding welcome message after receiving a ""pin_added""","Update app.py
+
+Change 'reaction_added' event to 'pin_added' event in the comment, in line <I> for Pin Added Events.",rag_few_shot,Fix comment to correctly reference 'pin_added' event instead of 'reaction_added' in app.py
+"diff --git a/auth_backends/__init__.py b/auth_backends/__init__.py
+index <HASH>..<HASH> 100644
+--- a/auth_backends/__init__.py
++++ b/auth_backends/__init__.py
+@@ -3,4 +3,4 @@
+  These package is designed to be used primarily with Open edX Django projects, but should be compatible with non-edX
+  projects as well.
+ """"""
+-__version__ = '2.0.0'  # pragma: no cover
++__version__ = '2.0.1'  # pragma: no cover",Create new Version for auth-backends for release,rag_few_shot,Bump auth-backends version to 2.0.1 for release
+"diff --git a/recordlinkage/indexing.py b/recordlinkage/indexing.py
+index <HASH>..<HASH> 100644
+--- a/recordlinkage/indexing.py
++++ b/recordlinkage/indexing.py
+@@ -521,6 +521,10 @@ class Pairs(PairsCore):
+         :return: The index of the candidate record pairs
+         :rtype: pandas.MultiIndex
+         """"""
++
++        if not isinstance(n, int):
++            raise ValueError(""an integer is required"")
++
+         if self.deduplication:
+             return self.index(_random_large_dedup, n)
+         else:","BUG: random pairs, check for incorrect instance first",rag_few_shot,Add type check for parameter n in random pairs method to enforce integer input
+"diff --git a/functional/streams.py b/functional/streams.py
+index <HASH>..<HASH> 100644
+--- a/functional/streams.py
++++ b/functional/streams.py
+@@ -56,7 +56,7 @@ class Stream(object):
+                     if isinstance(args[0], pandas.DataFrame):
+                         return Sequence(
+                             args[0].values, engine=engine, max_repr_items=self.max_repr_items)
+-            except ImportError:
++            except ImportError: # pragma: no cover
+                 pass
+ 
+         if len(args) > 1:","Ignore coverage for line that isn't hit on tests, but is valid",rag_few_shot,Add coverage ignore pragma to ImportError except block in Stream class to exclude untested but valid code line
+"diff --git a/flask_unchained/bundles/api/extensions/api.py b/flask_unchained/bundles/api/extensions/api.py
+index <HASH>..<HASH> 100644
+--- a/flask_unchained/bundles/api/extensions/api.py
++++ b/flask_unchained/bundles/api/extensions/api.py
+@@ -1,8 +1,7 @@
+ try:
+     from apispec.ext.marshmallow.openapi import __location_map__
+ except ImportError:
+-    from warnings import warn
+-    warn(""Please install apispec>=3.0 for the API Bundle to work correctly"")
++    __location_map__ = {}  # allow bundles to import from here without apispec installed
+ 
+ from flask_unchained import FlaskUnchained, unchained
+ from flask_unchained.bundles.controller.constants import (",allow bundles to import from the api bundle without  apispec installed,rag_few_shot,allow importing api bundle without apispec installed by providing empty __location_map__ instead of warning
+"diff --git a/pyemu/pst/pst_utils.py b/pyemu/pst/pst_utils.py
+index <HASH>..<HASH> 100644
+--- a/pyemu/pst/pst_utils.py
++++ b/pyemu/pst/pst_utils.py
+@@ -869,8 +869,8 @@ def try_process_output_file(ins_file, output_file=None):
+     if output_file is None:
+         output_file = ins_file.replace("".ins"", """")
+     df = None
++    i = InstructionFile(ins_file)
+     try:
+-        i = InstructionFile(ins_file)
+         df = i.read_output_file(output_file)
+     except Exception as e:
+         print(""error processing instruction/output file pair: {0}"".format(str(e)))",moved InstructionFile instance out of try-except,rag_few_shot,move InstructionFile instantiation before try-except block in try_process_output_file() to separate object creation from file reading errors
+"diff --git a/settings.py b/settings.py
+index <HASH>..<HASH> 100644
+--- a/settings.py
++++ b/settings.py
+@@ -11,9 +11,15 @@ ADMINS = (
+ 
+ MANAGERS = ADMINS
+ 
+-
+-DATABASE_ENGINE = 'sqlite3'
+-DATABASE_NAME = TEST_DATABASE_NAME = ':memory:'
++DATABASES = {
++    'default': {
++        'ENGINE': 'django.db.backends.sqlite3',
++        'NAME': ':memory:',
++    }
++}
++# good bye Django 1.1!
++#DATABASE_ENGINE = 'sqlite3'
++#DATABASE_NAME = TEST_DATABASE_NAME = ':memory:'
+ 
+ CACHE_BACKEND = 'locmem:///'",not being tested in django <I> any more,rag_few_shot,Update settings.py to use Django 1.2+ DATABASES setting and deprecate old DATABASE_ENGINE syntax
+"diff --git a/tests/test_cli.py b/tests/test_cli.py
+index <HASH>..<HASH> 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -23,11 +23,8 @@ def remove_fake_project_dir(request):
+ 
+ @pytest.fixture
+ def make_fake_project_dir(request):
+-    """"""
+-    Create the fake project directory created during the tests.
+-    """"""
+-    if not os.path.isdir('fake-project'):
+-        os.makedirs('fake-project')
++    """"""Create a fake project to be overwritten in the according tests.""""""
++    os.makedirs('fake-project')
+ 
+ 
+ @pytest.fixture(params=['-V', '--version'])",Update fixture to always create fake-project dir and fix doc str,rag_few_shot,Simplify make_fake_project_dir fixture by always creating fake-project directory and update its docstring
+"diff --git a/urwidtrees/widgets.py b/urwidtrees/widgets.py
+index <HASH>..<HASH> 100644
+--- a/urwidtrees/widgets.py
++++ b/urwidtrees/widgets.py
+@@ -58,7 +58,7 @@ class TreeListWalker(urwid.ListWalker):
+ 
+     def clear_cache(self):
+         """"""removes all cached lines""""""
+-        self.__getitem__.cache_clear()
++        self.__getitem__().cache_clear()
+ 
+     def _get(self, pos):
+         """"""looks up widget for given position; handling invalid arguments""""""",Call method on returned object not other method,rag_few_shot,"Fix clear_cache to call cache_clear on cached method, not its result"
+"diff --git a/setup.py b/setup.py
+index <HASH>..<HASH> 100644
+--- a/setup.py
++++ b/setup.py
+@@ -19,7 +19,7 @@ setup(
+     packages=find_packages(exclude=['test*']),
+     include_package_data=True,
+     license=behave_django.__license__,
+-    description=behave_django.__doc__,
++    description=behave_django.__doc__.strip(),
+     long_description=read_file('README.rst'),
+     url='https://github.com/behave/behave-django',
+     author='Mitchel Cabuloy',",Avoid packaging issue (potential LF in description),rag_few_shot,Strip whitespace from package description in setup.py to prevent formatting issues
+"diff --git a/doc/source/conf.py b/doc/source/conf.py
+index <HASH>..<HASH> 100644
+--- a/doc/source/conf.py
++++ b/doc/source/conf.py
+@@ -209,6 +209,7 @@ html_theme_options = {
+     ""external_links"": [],
+     ""github_url"": ""https://github.com/pandas-dev/pandas"",
+     ""twitter_url"": ""https://twitter.com/pandas_dev"",
++    ""google_analytics_id"": ""UA-27880019-2"",
+ }
+ 
+ # Add any paths that contain custom themes here, relative to this directory.",DOC: add back google analytics with the new doc theme (#<I>),rag_few_shot,DOC: add Google Analytics ID to html_theme_options in conf.py
+"diff --git a/openquake/hazardlib/contexts.py b/openquake/hazardlib/contexts.py
+index <HASH>..<HASH> 100644
+--- a/openquake/hazardlib/contexts.py
++++ b/openquake/hazardlib/contexts.py
+@@ -225,7 +225,9 @@ class ContextMaker(object):
+             rup.weight = weight
+             try:
+                 with self.ctx_mon:
+-                    if hasattr(src, 'location'):  # point source
++                    # if point or area source
++                    if (hasattr(src, 'location') or
++                      hasattr(src, 'area_discretization')):
+                         sctx, dctx = self.make_contexts(
+                             sites, rup, reqv_point=True)
+                     else:","apply correction also to area sources
+
+
+Former-commit-id: <I>fca<I>ff7b1ffc<I>cf<I>c1db5bbc8b4",rag_few_shot,handle area sources similarly to point sources when making contexts
+"diff --git a/registration/tests.py b/registration/tests.py
+index <HASH>..<HASH> 100644
+--- a/registration/tests.py
++++ b/registration/tests.py
+@@ -375,6 +375,7 @@ class RegistrationViewTests(TestCase):
+         response = self.client.get(reverse('registration_activate',
+                                            kwargs={ 'activation_key': profile.activation_key }))
+         self.assertEqual(response.status_code, 200)
++        self.assertTemplateUsed(response, 'registration/activate.html')
+ 
+         self.failUnless(User.objects.get(username='alice').is_active)",Test for use of the activation template,rag_few_shot,Add template usage assertion to activation view test
+"diff --git a/dosagelib/singleton.py b/dosagelib/singleton.py
+index <HASH>..<HASH> 100644
+--- a/dosagelib/singleton.py
++++ b/dosagelib/singleton.py
+@@ -32,7 +32,7 @@ class SingleInstance(object):
+         """"""Create an exclusive lockfile or exit with an error and the given
+         exit code.""""""
+         self.initialized = False
+-        scriptname = os.path.splitext(os.path.abspath(sys.argv[0]))[0]
++        scriptname = os.path.splitext(os.path.realpath(sys.argv[0]))[0]
+         lockname = scriptname.replace(""/"", ""-"").replace("":"", """").replace(""\\"", ""-"")
+         if flavor_id:
+             lockname += ""-%s"" % flavor_id",Use realpath to detect symlinked instances.,rag_few_shot,Use os.path.realpath instead of abspath to resolve script path in SingleInstance lockfile name generation
+"diff --git a/pefile.py b/pefile.py
+index <HASH>..<HASH> 100644
+--- a/pefile.py
++++ b/pefile.py
+@@ -5425,3 +5425,10 @@ class PE:
+             return section_alignment * ( val / section_alignment )
+         return val
+ 
++
++if __name__ == '__main__':
++    import sys
++    if not sys.argv[1:]:
++        print('pefile.py <filename>')
++    else:
++        print(PE(sys.argv[1]).dump_info())","Use ""python -m pefile"" to get printed dump",rag_few_shot,Add command-line interface to print PE dump info from filename argument
+"diff --git a/salt/modules/schedule.py b/salt/modules/schedule.py
+index <HASH>..<HASH> 100644
+--- a/salt/modules/schedule.py
++++ b/salt/modules/schedule.py
+@@ -14,7 +14,7 @@ import yaml
+ 
+ import salt.utils
+ import salt.utils.odict
+-import six
++import salt.utils.six as six
+ 
+ __proxyenabled__ = ['*']",Replaced import six in file /salt/modules/schedule.py,rag_few_shot,Replace import six with salt.utils.six in salt/modules/schedule.py for consistency
+"diff --git a/johnny/settings.py b/johnny/settings.py
+index <HASH>..<HASH> 100644
+--- a/johnny/settings.py
++++ b/johnny/settings.py
+@@ -10,7 +10,6 @@ BLACKLIST = getattr(settings, 'MAN_IN_BLACKLIST',
+             getattr(settings, 'JOHNNY_TABLE_BLACKLIST', []))
+ BLACKLIST = set(BLACKLIST)
+ 
+-# XXX: I've forgotten what JOHNNY_CACHE_KEY is exactly..
+ if django.VERSION[1] >= 2:
+     DB_CACHE_KEYS = dict((name, db.get('JOHNNY_CACHE_KEY', name))
+                      for name, db in settings.DATABASES.iteritems())",I remember what johnny_cache_key is now :),rag_few_shot,Remove outdated comment about JOHNNY_CACHE_KEY in settings.py
+"diff --git a/setup.py b/setup.py
+index <HASH>..<HASH> 100644
+--- a/setup.py
++++ b/setup.py
+@@ -32,7 +32,7 @@ from setuptools import setup, find_packages, Extension
+ from mwparserfromhell import __version__
+ from mwparserfromhell.compat import py26, py3k
+ 
+-with open(""README.rst"") as fp:
++with open(""README.rst"", **{'encoding':'utf-8'} if py3k else {}) as fp:
+     long_docs = fp.read()
+ 
+ tokenizer = Extension(""mwparserfromhell.parser._tokenizer"",","Force opening README.rst as utf-8
+
+Causes issues if the locale is not set to utf-8",rag_few_shot,setup.py: open README.rst with utf-8 encoding on Python 3 to avoid locale issues
+"diff --git a/tmuxp/cli.py b/tmuxp/cli.py
+index <HASH>..<HASH> 100644
+--- a/tmuxp/cli.py
++++ b/tmuxp/cli.py
+@@ -42,11 +42,15 @@ def get_cwd():
+     return os.getcwd()
+ 
+ 
+-def tmuxp_echo(message=None, log_level='INFO', **click_kwargs):
++def tmuxp_echo(message=None, log_level='INFO', style_log=False, **click_kwargs):
+     """"""
+     Combines logging.log and click.echo
+     """"""
+-    logger.log(log.LOG_LEVELS[log_level], click.unstyle(message))
++    if style_log:
++        logger.log(log.LOG_LEVELS[log_level], message)
++    else:
++        logger.log(log.LOG_LEVELS[log_level], click.unstyle(message))
++
+     click.echo(message, **click_kwargs)",adding a style switch to the log,rag_few_shot,add style_log parameter to tmuxp_echo to control logging of styled messages
+"diff --git a/lib/svtplay_dl/__init__.py b/lib/svtplay_dl/__init__.py
+index <HASH>..<HASH> 100644
+--- a/lib/svtplay_dl/__init__.py
++++ b/lib/svtplay_dl/__init__.py
+@@ -89,7 +89,8 @@ def get_media(url, options):
+                 return
+ 
+         episodes = stream.find_all_episodes(options)
+-
++        if episodes is None:
++            return
+         for idx, o in enumerate(episodes):
+             if o == url:
+                 substream = stream","get_media: do not try to parse episodes when we can’t find any.
+
+this fixes #<I>",rag_few_shot,get_media: avoid iterating episodes if none found to prevent errors
+"diff --git a/subscriptions/tasks.py b/subscriptions/tasks.py
+index <HASH>..<HASH> 100644
+--- a/subscriptions/tasks.py
++++ b/subscriptions/tasks.py
+@@ -278,9 +278,9 @@ class SendNextMessage(Task):
+         l.debug(""saving subscription"")
+         subscription.save()
+ 
+-        l.debug(""firing post_send_process task"")
+-        post_send_process.apply_async(args=[subscription_id])
+-        l.debug(""fired post_send_process task"")
++        l.debug(""starting post_send_process task"")
++        post_send_process(subscription_id)
++        l.debug(""finished post_send_process task"")
+ 
+         l.debug(""Firing SMS/OBD calls sent per message set metric"")
+         send_type = utils.normalise_metric_name(",Make post send process not async,rag_few_shot,Run post_send_process synchronously instead of async in SendNextMessage task
+"diff --git a/morango/models.py b/morango/models.py
+index <HASH>..<HASH> 100644
+--- a/morango/models.py
++++ b/morango/models.py
+@@ -308,7 +308,7 @@ class SyncableModel(UUIDModelMixin):
+ 
+     @staticmethod
+     def compute_namespaced_id(partition_value, source_id_value, model_name):
+-        return sha2_uuid(partition_value, source_id_value)
++        return sha2_uuid(partition_value, source_id_value, model_name)
+ 
+     def calculate_uuid(self):
+         self._morango_source_id = self.calculate_source_id()",Add model_name to sha calc.,rag_few_shot,Pass model_name to sha2_uuid in compute_namespaced_id for proper namespacing
+"diff --git a/pyprf_feature/analysis/pyprf_main.py b/pyprf_feature/analysis/pyprf_main.py
+index <HASH>..<HASH> 100644
+--- a/pyprf_feature/analysis/pyprf_main.py
++++ b/pyprf_feature/analysis/pyprf_main.py
+@@ -314,7 +314,7 @@ def pyprf(strCsvCnfg, lgcTest=False):  #noqa
+     print('---------Exporting results')
+ 
+     # Save nii results:
+-    for idxOut in range(0, 6):
++    for idxOut in range(0, len(lstNiiNames)):
+         # Create nii object for results:
+         niiOut = nb.Nifti1Image(aryPrfRes[..., idxOut],
+                                 aryAff,",Added variable for number of exproted maps.,rag_few_shot,Use dynamic length for output NIfTI export loop based on lstNiiNames size.
+"diff --git a/tools/driver_tests.py b/tools/driver_tests.py
+index <HASH>..<HASH> 100755
+--- a/tools/driver_tests.py
++++ b/tools/driver_tests.py
+@@ -51,8 +51,15 @@ def capped(db):
+         collection2.insert({""dashes"": str})
+         str += ""-""
+ 
++def count1(db):
++    print db.test1.find().count()
++    print db.test2.find().count()
++    print db.test3.find({""i"": ""a""}).count()
++    print db.test3.find({""i"": 3}).count()
++    print db.test3.find({""i"": {""$gte"": 67}}).count()
++
+ def main(test, out_file):
+-    db = Connection()[test]
++    db = Connection().driver_test_framework
+     test_function = globals()[test]
+     try:
+         begin = datetime.datetime.now()",update driver tests script to use default db and add count1 test,rag_few_shot,add count1 test to driver_tests and set default db in main() to driver_test_framework
+"diff --git a/multiqc/modules/picard/HsMetrics.py b/multiqc/modules/picard/HsMetrics.py
+index <HASH>..<HASH> 100644
+--- a/multiqc/modules/picard/HsMetrics.py
++++ b/multiqc/modules/picard/HsMetrics.py
+@@ -158,7 +158,7 @@ def parse_reports(self):
+             assert len(covs) > 0
+             covs = [str(i) for i in covs]
+             log.debug(""Custom Picard coverage thresholds: {}"".format("", "".join([i for i in covs])))
+-        except (AttributeError, TypeError, AssertionError):
++        except (KeyError, AttributeError, TypeError, AssertionError):
+             covs = [""30""]
+         for c in covs:
+             self.general_stats_headers[""PCT_TARGET_BASES_{}X"".format(c)] = {",Picard HsMetrics - tolerate KeyError from missing picard config,rag_few_shot,Picard HsMetrics - also catch KeyError when accessing coverage thresholds in config
+"diff --git a/scss/types.py b/scss/types.py
+index <HASH>..<HASH> 100644
+--- a/scss/types.py
++++ b/scss/types.py
+@@ -152,6 +152,9 @@ class Undefined(Null):
+     def __rfloordiv__(self, other):
+         return self
+ 
++    def __mul__(self, other):
++        return self
++
+     def __rmul__(self, other):
+         return self",Added __mul__ op to Undefined,rag_few_shot,Add __mul__ method to Undefined to support multiplication operations returning self
+"diff --git a/bcbio/ngsalign/tophat.py b/bcbio/ngsalign/tophat.py
+index <HASH>..<HASH> 100644
+--- a/bcbio/ngsalign/tophat.py
++++ b/bcbio/ngsalign/tophat.py
+@@ -383,6 +383,8 @@ def fix_insert_size(in_bam, config):
+     bam_handle= bam.open_samfile(in_bam)
+     header = bam_handle.header.copy()
+     rg_dict = header['RG'][0]
++    if 'PI' not in rg_dict:
++        return in_bam
+     PI = int(rg_dict.get('PI'))
+     PI = PI + 2*read_length
+     rg_dict['PI'] = PI",Skip fixing the PI read group if it does not exist.,rag_few_shot,Skip insert size fix if read group PI tag is missing to avoid errors.
+"diff --git a/sublimedsl/keymap.py b/sublimedsl/keymap.py
+index <HASH>..<HASH> 100644
+--- a/sublimedsl/keymap.py
++++ b/sublimedsl/keymap.py
+@@ -368,5 +368,5 @@ def sort_dict(dic, key=lambda t: first(t)):
+     return OrderedDict(sorted(dic.items(), key=key))
+ 
+ 
+-def jsonify(self, indent=2, **kwargs):
+-    return json.dumps(self, cls=KeymapJSONEncoder, indent=indent, **kwargs)
++def jsonify(obj, indent=2, **kwargs):
++    return json.dumps(obj, cls=KeymapJSONEncoder, indent=indent, separators=(',', ': '), **kwargs)","Don't relay on default separators in json.dumps
+
+The default separators was changed in Python <I>.",rag_few_shot,Make jsonify a standalone function and add explicit separators for consistent JSON formatting
+"diff --git a/clustergrammer_widget/_version.py b/clustergrammer_widget/_version.py
+index <HASH>..<HASH> 100644
+--- a/clustergrammer_widget/_version.py
++++ b/clustergrammer_widget/_version.py
+@@ -1,2 +1,2 @@
+-version_info = (0, 1, 3, 'dev')
++version_info = (0, 1, 4, 'dev')
+ __version__ = '.'.join(map(str, version_info))","<I> clustergrammer_widget is compatable with Python 2 and 3, no changes in widget API",rag_few_shot,bump clustergrammer_widget version to 0.1.4.dev
+"diff --git a/squad/settings.py b/squad/settings.py
+index <HASH>..<HASH> 100644
+--- a/squad/settings.py
++++ b/squad/settings.py
+@@ -381,10 +381,11 @@ if SENTRY_DSN:
+     try:
+         import sentry_sdk
+         from sentry_sdk.integrations.django import DjangoIntegration
++        from sentry_sdk.integrations.celery import CeleryIntegration
+         from squad.version import __version__ as squad_version
+         sentry_sdk.init(
+             dsn=SENTRY_DSN,
+-            integrations=[DjangoIntegration()],
++            integrations=[DjangoIntegration(), CeleryIntegration()],
+             release='%s@%s' % (os.getenv('ENV', 'squad'), squad_version),
+         )
+     except ImportError:",settings: add CeleryIntegration to sentry,rag_few_shot,settings: add CeleryIntegration to Sentry integrations for better task monitoring
+"diff --git a/tests/lib/testcore.py b/tests/lib/testcore.py
+index <HASH>..<HASH> 100644
+--- a/tests/lib/testcore.py
++++ b/tests/lib/testcore.py
+@@ -22,6 +22,10 @@ class TestCore(TestHelper):
+     def f(self, *args):
+         return gettestcwd(""tests"", ""files"", *args)
+ 
++    def testCoreDataMode(self):
++        c = Core(source_data = 3.14159, schema_data = {""type"": ""number""} )
++        c.run_core()
++
+     def testCore(self):
+         # Test sequence with only string values
+         c = Core(source_file = self.f(""1a.yaml""), schema_file = self.f(""1b.yaml"") )",Added new test for source_data and schema_data input variables to core,rag_few_shot,tests: add test for Core using source_data and schema_data inputs
+"diff --git a/src/ocrmypdf/_sync.py b/src/ocrmypdf/_sync.py
+index <HASH>..<HASH> 100644
+--- a/src/ocrmypdf/_sync.py
++++ b/src/ocrmypdf/_sync.py
+@@ -288,6 +288,7 @@ def exec_concurrent(context: PdfContext):
+     pdf = ocrgraft.finalize()
+ 
+     # PDF/A and metadata
++    log.info(""Postprocessing..."")
+     pdf = post_process(pdf, context)
+ 
+     # Copy PDF file to destination","Add ""Postprocessing"" message as a hint for long Ghostscript runs",rag_few_shot,"Add log info ""Postprocessing..."" before PDF post-processing step"
+"diff --git a/allennlp/modules/token_embedders/bert_token_embedder.py b/allennlp/modules/token_embedders/bert_token_embedder.py
+index <HASH>..<HASH> 100644
+--- a/allennlp/modules/token_embedders/bert_token_embedder.py
++++ b/allennlp/modules/token_embedders/bert_token_embedder.py
+@@ -117,7 +117,7 @@ class PretrainedBertEmbedder(BertEmbedder):
+     """"""
+     Parameters
+     ----------
+-    pretrained_model_name: ``str``
++    pretrained_model: ``str``
+         Either the name of the pretrained model to use (e.g. 'bert-base-uncased'),
+         or the path to the .tar.gz file with the model weights.","change mislabeled variable in description (#<I>)
+
+the required parameter ""pretrained_model"" was mislabeled as ""pretrained_model_name"" in the documentation",rag_few_shot,fix parameter name in PretrainedBertEmbedder docstring from pretrained_model_name to pretrained_model
+"diff --git a/pysat/__init__.py b/pysat/__init__.py
+index <HASH>..<HASH> 100644
+--- a/pysat/__init__.py
++++ b/pysat/__init__.py
+@@ -10,7 +10,7 @@
+ 
+ # current version
+ #==============================================================================
+-VERSION = (0, 1, 4, ""dev"", 0)
++VERSION = (0, 1, 4, ""dev"", 1)
+ 
+ 
+ # PEP440 Format
+diff --git a/setup.py b/setup.py
+index <HASH>..<HASH> 100644
+--- a/setup.py
++++ b/setup.py
+@@ -107,5 +107,5 @@ setup(name='python-sat',
+     ext_modules=[pycard_ext, pysolvers_ext],
+     scripts=['examples/{0}.py'.format(s) for s in scripts],
+     cmdclass={'build': build},
+-    install_requires=['six']
++    install_requires=['pypblib>=0.0.3', 'six']
+ )",Added the missing PyPBLib dependency.,rag_few_shot,Bump version to 0.1.4.dev1 and add pypblib>=0.0.3 to install_requires.
+"diff --git a/salt/returners/cassandra_return.py b/salt/returners/cassandra_return.py
+index <HASH>..<HASH> 100644
+--- a/salt/returners/cassandra_return.py
++++ b/salt/returners/cassandra_return.py
+@@ -43,5 +43,5 @@ def returner(ret):
+     else:
+         columns['return'] = str(ret['return'])
+ 
+-    log.debug(back)
++    log.debug(columns)
+     cf.insert(ret['jid'], columns)",Debug statement used the wrong variable.,rag_few_shot,Fix debug log to output correct variable 'columns' instead of undefined 'back' in cassandra_return.py
+"diff --git a/orb/data/store.py b/orb/data/store.py
+index <HASH>..<HASH> 100644
+--- a/orb/data/store.py
++++ b/orb/data/store.py
+@@ -134,7 +134,7 @@ class DataStore(AddonManager):
+                 raise orb.errors.DataStoreError('Unable to convert to yaml')
+ 
+         # save as JSON
+-        elif col_type == orb.Column.JSON:
++        elif col_type == orb.ColumnType.JSON:
+             try:
+                 return projex.rest.jsonify(py_value)
+             except StandardError:","#noissue
+fix typo in the column",rag_few_shot,fix column type reference from orb.Column to orb.ColumnType for JSON handling
+"diff --git a/setup.py b/setup.py
+index <HASH>..<HASH> 100644
+--- a/setup.py
++++ b/setup.py
+@@ -71,6 +71,7 @@ setup(
+         # that you indicate whether you support Python 2, Python 3 or both.
+         'Programming Language :: Python :: 2.7',
+         'Programming Language :: Python :: 3.6',
++        'Programming Language :: Python :: 3.7',
+     ],
+ 
+     # What does your project relate to?",Indicated support of Python <I> in setup.py.,rag_few_shot,Indicate support for Python 3.7 in setup.py classifiers.
