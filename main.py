@@ -140,9 +140,12 @@ if __name__ == "__main__":
 
     # #  Test(1) Java vs OpenAI gpt-3.5-turbo
     # dataset_path = 'dataset/samples/java.csv'
-    # open_ai_model = 'gpt-3.5-turbo'
+    # # open_ai_model = 'gpt-3.5-turbo'
     # # open_ai_model = 'gpt-4.1-mini'
-    # prompt_name = 'zero_shot'
+    # # open_ai_model = 'gpt-4-turbo'
+    # open_ai_model = 'gpt-4o'
+    # prompt_name = 'feature'
+    # # prompt_name = 'zero_shot'
     # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
     # # Run inference on the dataset
@@ -170,9 +173,11 @@ if __name__ == "__main__":
     # #  Test(1) Python vs OpenAI gpt-3.5-turbo
     # dataset_path = 'dataset/samples/py.csv'
     # # open_ai_model = 'gpt-3.5-turbo'
-    # open_ai_model = 'gpt-4.1-mini'
-    # # prompt_name = 'feature'
-    # prompt_name = 'zero_shot'
+    # # open_ai_model = 'gpt-4.1-mini'
+    # # open_ai_model = 'gpt-4-turbo'
+    # open_ai_model = 'gpt-4o'
+    # prompt_name = 'feature'
+    # # prompt_name = 'zero_shot'
     # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
     # # Run inference on the dataset
@@ -199,9 +204,11 @@ if __name__ == "__main__":
     # #  Test(1) JavaScript vs OpenAI gpt-3.5-turbo
     # dataset_path = 'dataset/samples/js.csv'
     # # open_ai_model = 'gpt-3.5-turbo'
-    # open_ai_model = 'gpt-4.1-mini'
-    # # prompt_name = 'feature'
-    # prompt_name = 'zero_shot'
+    # # open_ai_model = 'gpt-4.1-mini'
+    # # open_ai_model = 'gpt-4-turbo'
+    # open_ai_model = 'gpt-4o'
+    # prompt_name = 'feature'
+    # # prompt_name = 'zero_shot'
     # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
     # # Run inference on the dataset
@@ -217,25 +224,25 @@ if __name__ == "__main__":
     # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model,prompts_list=[prompt_name])
 
     
-
-    
-    # ###################################################################################################################
-    # ######################################################### PHP #####################################################
-    # ###################################################################################################################
-    # # PHP
-    # print("Running inference on the PHP dataset...")
+    ###################################################################################################################
+    ######################################################### PHP #####################################################
+    ###################################################################################################################
+    # PHP
+    print("Running inference on the PHP dataset...")
     
 
-    # #  Test(1) PHP vs OpenAI gpt-3.5-turbo
-    # dataset_path = 'dataset/samples/php.csv'
-    # # open_ai_model = 'gpt-3.5-turbo'
+    #  Test(1) PHP vs OpenAI gpt-3.5-turbo
+    dataset_path = 'dataset/samples/php.csv'
+    # open_ai_model = 'gpt-3.5-turbo'
     # open_ai_model = 'gpt-4.1-mini'
-    # # prompt_name = 'feature'
+    # open_ai_model = 'gpt-4-turbo'
+    open_ai_model = 'gpt-4o'
+    prompt_name = 'feature'
     # prompt_name = 'zero_shot'
-    # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{open_ai_model}_{prompt_name}.csv"
+    output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
-    # # Run inference on the dataset
-    # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model,prompts_list=[prompt_name])
+    # Run inference on the dataset
+    run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model,prompts_list=[prompt_name])
     
     # #  Test(2) PHP vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/php.csv'

@@ -12,7 +12,7 @@ load_dotenv()
 import os
 import pandas as pd
 
-
+import time
 
 # Run Inference on the dataset samples using the OpenAI clients
 # and save the results to a new CSV file
@@ -52,8 +52,8 @@ def run_open_ai_rag_inference_on_dataset(dataset_path,output_path,model, rag):
                 'prompt_style': prompt_name,
                 'inference_message': openai_message,
             })
-
-        break  # Break after the first prompt style only zero_shot
+        time.sleep(4.5)  # ~13 requests per minute (safer than 15)
+        # break  # Break after the first prompt style only zero_shot
 
     # Save results to a new DataFrame
     results_df = pd.DataFrame(results)
@@ -107,8 +107,10 @@ def run_gemini_rag_inference_on_dataset(dataset_path,output_path,model,rag):
                 'prompt_style': prompt_name,
                 'inference_message': gemini_message,
             })
+            # After each API call
+            time.sleep(4.5)  # ~13 requests per minute (safer than 15)
 
-            break  # Break after the first prompt style only zero_shot
+            # break  # Break after the first prompt style only zero_shot
 
     # Save results to a new DataFrame
     results_df = pd.DataFrame(results)
@@ -121,67 +123,63 @@ def run_gemini_rag_inference_on_dataset(dataset_path,output_path,model,rag):
     print(f"Results saved to {output_path}")
 
 if __name__ == "__main__":
-    print("Running inference on the dataset...")
+    print("Running RAG inference on the dataset...")
 
-    rag = RAG(index_path="faiss_index_java.index", documents="documents_java.pkl")
-
-
-    dataset_path = 'dataset/samples/java.csv'
-    open_ai_model = 'gpt-3.5-turbo'
-    output_path =  f"dataset/samples/evaluation_results/rag_java_evaluation_results_{open_ai_model}.csv"
-
-    run_open_ai_rag_inference_on_dataset(dataset_path,output_path,open_ai_model,rag)
     
-
-    # ###################################################################################################################
-    # ######################################################## Java #####################################################
-    # ###################################################################################################################
-    # # Java
+    ##################################################################################################################
+    ####################################################### Java #####################################################
+    # ##################################################################################################################
     # print("Running inference on the java dataset...")
-    
+    # rag = RAG(index_path="faiss_index_java.index", documents="documents_java.pkl")
 
-    # #  Test(1) Java vs OpenAI gpt-3.5-turbo
+    # #  Test(1) Java vs OpenAI
     # dataset_path = 'dataset/samples/java.csv'
-    # open_ai_model = 'gpt-3.5-turbo'
-    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{open_ai_model}.csv"
+    # # open_ai_model = 'gpt-3.5-turbo'
+    # # open_ai_model = 'gpt-4.1-mini'
+    # open_ai_model = 'gpt-4o'
+    # prompt_name = 'rag_few_shot'
+    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
     # # Run inference on the dataset
-    # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
-    
+    # run_open_ai_rag_inference_on_dataset(dataset_path,output_path,open_ai_model,rag)
+
+
     # #  Test(2) Java vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/java.csv'
     # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{gemini_model}.csv"
+    # prompt_name = 'rag_few_shot'
+    # output_path =  f"dataset/samples/evaluation_results/java_evaluation_results_{gemini_model}_{prompt_name}.csv"
 
     # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+    # run_gemini_rag_inference_on_dataset(dataset_path,output_path,gemini_model,rag)
 
-
-
-    # ###################################################################################################################
-    # ####################################################### Python ####################################################
-    # ###################################################################################################################    
-    # # Python
+   
+    # #################################################################################################################
+    # ##################################################### Python ####################################################
+    # ##################################################################################################################    
     # print("Running inference on the python dataset...")
-    
+    # rag = RAG(index_path="faiss_index_py.index", documents="documents_py.pkl")
 
-    # # #  Test(1) Python vs OpenAI gpt-3.5-turbo
-    # # dataset_path = 'dataset/samples/py.csv'
+    # #  Test(1) Python vs OpenAI gpt-3.5-turbo
+    # dataset_path = 'dataset/samples/py.csv'
     # # open_ai_model = 'gpt-3.5-turbo'
-    # # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{open_ai_model}_zero_shot_only.csv"
+    # # open_ai_model = 'gpt-4.1-mini'
+    # # open_ai_model = 'gpt-4-turbo'
+    # open_ai_model = 'gpt-4o'
+    # prompt_name = 'rag_few_shot'
+    # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
-    # # # Run inference on the dataset
-    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    # # Run inference on the dataset
+    # run_open_ai_rag_inference_on_dataset(dataset_path,output_path,open_ai_model,rag)
     
     # #  Test(2) Python vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/py.csv'
     # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{gemini_model}_zero_shot_only.csv"
+    # prompt_name = 'rag_few_shot'
+    # output_path =  f"dataset/samples/evaluation_results/py_evaluation_results_{gemini_model}_{prompt_name}.csv"
 
     # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
-
-
+    # run_gemini_rag_inference_on_dataset(dataset_path,output_path,gemini_model,rag)
     
 
     # ###################################################################################################################
@@ -189,46 +187,57 @@ if __name__ == "__main__":
     # ###################################################################################################################
     # # JavaScript
     # print("Running inference on the javascript dataset...")
-    
+    # rag = RAG(index_path="faiss_index_js.index", documents="documents_js.pkl")
 
-    # # #  Test(1) JavaScript vs OpenAI gpt-3.5-turbo
-    # # dataset_path = 'dataset/samples/js.csv'
+    # #  Test(1) JavaScript vs OpenAI gpt-3.5-turbo
+    # dataset_path = 'dataset/samples/js.csv'
     # # open_ai_model = 'gpt-3.5-turbo'
-    # # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{open_ai_model}_zero_shot_only.csv"
+    # # open_ai_model = 'gpt-4.1-mini'
+    # # open_ai_model = 'gpt-4-turbo'
+    # open_ai_model = 'gpt-4o'
+    # prompt_name = 'rag_few_shot'
+    # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
-    # # # Run inference on the dataset
-    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    # # Run inference on the dataset
+    # run_open_ai_rag_inference_on_dataset(dataset_path,output_path,open_ai_model,rag)
+
     
     # #  Test(2) JavaScript vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/js.csv'
     # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{gemini_model}_zero_shot_only.csv"
+    # prompt_name = 'rag_few_shot'
+    # output_path =  f"dataset/samples/evaluation_results/js_evaluation_results_{gemini_model}_{prompt_name}.csv"
 
     # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
-
+    # run_gemini_rag_inference_on_dataset(dataset_path,output_path,gemini_model,rag)
     
 
     
     # ###################################################################################################################
     # ######################################################### PHP #####################################################
-    # ###################################################################################################################
-    # # PHP
-    # print("Running inference on the PHP dataset...")
-    
+    ###################################################################################################################
+    # PHP
+    print("Running inference on the PHP dataset...")
 
-    # # #  Test(1) PHP vs OpenAI gpt-3.5-turbo
-    # # dataset_path = 'dataset/samples/php.csv'
-    # # open_ai_model = 'gpt-3.5-turbo'
-    # # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{open_ai_model}_zero_shot_only.csv"
+    rag = RAG(index_path="faiss_index_php.index", documents="documents_php.pkl")
+
+    #  Test(1) PHP vs OpenAI gpt-3.5-turbo
+    dataset_path = 'dataset/samples/php.csv'
+    # open_ai_model = 'gpt-3.5-turbo'
+    # open_ai_model = 'gpt-4.1-mini'
+    open_ai_model = 'gpt-4o'
+    prompt_name = 'rag_few_shot'
+    output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{open_ai_model}_{prompt_name}.csv"
     
-    # # # Run inference on the dataset
-    # # run_open_ai_inference_on_dataset(dataset_path,output_path,open_ai_model)
+    # Run inference on the dataset
+    run_open_ai_rag_inference_on_dataset(dataset_path,output_path,open_ai_model,rag)
     
     # #  Test(2) PHP vs Gemini 2.0 Flash
     # dataset_path = 'dataset/samples/php.csv'
     # gemini_model = 'gemini-2.0-flash'
-    # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{gemini_model}_zero_shot_only.csv"
+    # prompt_name = 'rag_few_shot'
+    # output_path =  f"dataset/samples/evaluation_results/php_evaluation_results_{gemini_model}_{prompt_name}.csv"
 
     # # Run inference on the dataset
-    # run_gemini_inference_on_dataset(dataset_path,output_path,gemini_model)
+    # run_gemini_rag_inference_on_dataset(dataset_path,output_path,gemini_model,rag)
+    

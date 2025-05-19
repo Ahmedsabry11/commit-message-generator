@@ -83,43 +83,64 @@ def evaluate_model_performance(input_csv_path, model_name, language, prompt_styl
 
 if __name__ == "__main__":
     print("Running evaluation on the dataset...")
-        # List of models and languages
+
+    ##########################################################################################################################
+    ######################################################## Classical Results ###############################################
+    ##########################################################################################################################
+    print("Running evaluation on the classical dataset...")
+    # List of models and languages
     evaluations = [
         # Java
         ("dataset/samples/evaluation_results/java_evaluation_results_gemini-2.0-flash_feature.csv", "Gemini 2.0 Flash", "Java", "feature"),
-        ("dataset/samples/evaluation_results/java_evaluation_results_gemini-2.0-flash_zero_shot.csv", "Gemini 2.0 Flash Zero-Shot", "Java", "zero_shot"),
+        ("dataset/samples/evaluation_results/java_evaluation_results_gemini-2.0-flash_zero_shot.csv", "Gemini 2.0 Flash", "Java", "zero_shot"),
 
         ("dataset/samples/evaluation_results/java_evaluation_results_gpt-3.5-turbo_feature.csv", "GPT-3.5 Turbo", "Java", "feature"),
-        ("dataset/samples/evaluation_results/java_evaluation_results_gpt-3.5-turbo_zero_shot.csv", "GPT-3.5 Turbo Zero-Shot", "Java", "zero_shot"),
+        ("dataset/samples/evaluation_results/java_evaluation_results_gpt-3.5-turbo_zero_shot.csv", "GPT-3.5 Turbo", "Java", "zero_shot"),
         ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4.1-mini_feature.csv", "GPT-4.1 Mini", "Java", "feature"),
-        ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4.1-mini_zero_shot.csv", "GPT-4.1 Mini Zero-Shot", "Java", "zero_shot"),
+        ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4.1-mini_zero_shot.csv", "GPT-4.1 Mini", "Java", "zero_shot"),
+        # ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4-turbo_feature.csv", "GPT-4 Turbo", "Java", "feature"),
+        # ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4-turbo_zero_shot.csv", "GPT-4 Turbo", "Java", "zero_shot"),
+        ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4o_feature.csv", "GPT-4o", "Java", "feature"),
+        ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4o_zero_shot.csv", "GPT-4o", "Java", "zero_shot"),
         
         # Python
         ("dataset/samples/evaluation_results/py_evaluation_results_gemini-2.0-flash_feature.csv", "Gemini 2.0 Flash", "Python", "feature"),
-        ("dataset/samples/evaluation_results/py_evaluation_results_gemini-2.0-flash_zero_shot.csv", "Gemini 2.0 Flash Zero-Shot", "Python", "zero_shot"),
+        ("dataset/samples/evaluation_results/py_evaluation_results_gemini-2.0-flash_zero_shot.csv", "Gemini 2.0 Flash", "Python", "zero_shot"),
 
         ("dataset/samples/evaluation_results/py_evaluation_results_gpt-3.5-turbo_feature.csv", "GPT-3.5 Turbo", "Python", "feature"),
-        ("dataset/samples/evaluation_results/py_evaluation_results_gpt-3.5-turbo_zero_shot.csv", "GPT-3.5 Turbo Zero-Shot", "Python", "zero_shot"),
+        ("dataset/samples/evaluation_results/py_evaluation_results_gpt-3.5-turbo_zero_shot.csv", "GPT-3.5 Turbo", "Python", "zero_shot"),
         ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4.1-mini_feature.csv", "GPT-4.1 Mini", "Python", "feature"),
-        ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4.1-mini_zero_shot.csv", "GPT-4.1 Mini Zero-Shot", "Python", "zero_shot"),
+        ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4.1-mini_zero_shot.csv", "GPT-4.1 Mini", "Python", "zero_shot"),
+        # ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4-turbo_feature.csv", "GPT-4 Turbo", "Python", "feature"),
+        # ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4-turbo_zero_shot.csv", "GPT-4 Turbo", "Python", "zero_shot"),
+        ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4o_feature.csv", "GPT-4o", "Python", "feature"),
+        ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4o_zero_shot.csv", "GPT-4o", "Python", "zero_shot"),
 
-        # JS
+        # # JS
         ("dataset/samples/evaluation_results/js_evaluation_results_gemini-2.0-flash_feature.csv", "Gemini 2.0 Flash", "JavaScript", "feature"),
-        ("dataset/samples/evaluation_results/js_evaluation_results_gemini-2.0-flash_zero_shot.csv", "Gemini 2.0 Flash Zero-Shot", "JavaScript", "zero_shot"),
+        ("dataset/samples/evaluation_results/js_evaluation_results_gemini-2.0-flash_zero_shot.csv", "Gemini 2.0 Flash", "JavaScript", "zero_shot"),
 
         ("dataset/samples/evaluation_results/js_evaluation_results_gpt-3.5-turbo_feature.csv", "GPT-3.5 Turbo", "JavaScript", "feature"),
-        ("dataset/samples/evaluation_results/js_evaluation_results_gpt-3.5-turbo_zero_shot.csv", "GPT-3.5 Turbo Zero-Shot", "JavaScript", "zero_shot"),
+        ("dataset/samples/evaluation_results/js_evaluation_results_gpt-3.5-turbo_zero_shot.csv", "GPT-3.5 Turbo", "JavaScript", "zero_shot"),
         ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4.1-mini_feature.csv", "GPT-4.1 Mini", "JavaScript", "feature"),
-        ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4.1-mini_zero_shot.csv", "GPT-4.1 Mini Zero-Shot", "JavaScript", "zero_shot"),
+        ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4.1-mini_zero_shot.csv", "GPT-4.1 Mini", "JavaScript", "zero_shot"),
+        # ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4-turbo_feature.csv", "GPT-4 Turbo", "JavaScript", "feature"),
+        # ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4-turbo_zero_shot.csv", "GPT-4 Turbo", "JavaScript", "zero_shot"),
+        ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4o_feature.csv", "GPT-4o", "JavaScript", "feature"),
+        ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4o_zero_shot.csv", "GPT-4o", "JavaScript", "zero_shot"),
 
         # PHP
         ("dataset/samples/evaluation_results/php_evaluation_results_gemini-2.0-flash_feature.csv", "Gemini 2.0 Flash", "PHP", "feature"),
-        ("dataset/samples/evaluation_results/php_evaluation_results_gemini-2.0-flash_zero_shot.csv", "Gemini 2.0 Flash Zero-Shot", "PHP", "zero_shot"),
+        ("dataset/samples/evaluation_results/php_evaluation_results_gemini-2.0-flash_zero_shot.csv", "Gemini 2.0 Flash", "PHP", "zero_shot"),
 
         ("dataset/samples/evaluation_results/php_evaluation_results_gpt-3.5-turbo_feature.csv", "GPT-3.5 Turbo", "PHP", "feature"),
-        ("dataset/samples/evaluation_results/php_evaluation_results_gpt-3.5-turbo_zero_shot.csv", "GPT-3.5 Turbo Zero-Shot", "PHP", "zero_shot"),
+        ("dataset/samples/evaluation_results/php_evaluation_results_gpt-3.5-turbo_zero_shot.csv", "GPT-3.5 Turbo", "PHP", "zero_shot"),
         ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4.1-mini_feature.csv", "GPT-4.1 Mini", "PHP", "feature"),
-        ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4.1-mini_zero_shot.csv", "GPT-4.1 Mini Zero-Shot", "PHP", "zero_shot"),
+        ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4.1-mini_zero_shot.csv", "GPT-4.1 Mini", "PHP", "zero_shot"),
+        # ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4-turbo_feature.csv", "GPT-4 Turbo", "PHP", "feature"),
+        # ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4-turbo_zero_shot.csv", "GPT-4 Turbo", "PHP", "zero_shot"),
+        ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4o_feature.csv", "GPT-4o", "PHP", "feature"),
+        ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4o_zero_shot.csv", "GPT-4o", "PHP", "zero_shot"),
     ]
 
 
@@ -133,6 +154,58 @@ if __name__ == "__main__":
     output_csv_path = "dataset/samples/evaluation_results/summary_results.csv"
     results_df.to_csv(output_csv_path, index=False)
     print(f"Results saved to {output_csv_path}")
+
+
+    # ##########################################################################################################################
+    # ########################################################### Rag Results ##################################################
+    # ##########################################################################################################################
+    # print("Running evaluation on the RAG dataset...")
+
+    # # List of models and languages
+    # evaluations = [
+    #     # Java
+    #     ("dataset/samples/evaluation_results/java_evaluation_results_gemini-2.0-flash_rag_few_shot.csv", "Gemini 2.0 Flash", "Java", "rag_few_shot"),
+
+    #     ("dataset/samples/evaluation_results/java_evaluation_results_gpt-3.5-turbo_rag_few_shot.csv", "GPT-3.5 Turbo", "Java", "rag_few_shot"),
+    #     ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4.1-mini_rag_few_shot.csv", "GPT-4.1 Mini", "Java", "rag_few_shot"),
+    #     ("dataset/samples/evaluation_results/java_evaluation_results_gpt-4o_rag_few_shot.csv", "GPT-4o", "Java", "rag_few_shot"),
+        
+    #     # Python
+    #     ("dataset/samples/evaluation_results/py_evaluation_results_gemini-2.0-flash_rag_few_shot.csv", "Gemini 2.0 Flash", "Python", "rag_few_shot"),
+
+    #     ("dataset/samples/evaluation_results/py_evaluation_results_gpt-3.5-turbo_rag_few_shot.csv", "GPT-3.5 Turbo", "Python", "rag_few_shot"),
+    #     ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4.1-mini_rag_few_shot.csv", "GPT-4.1 Mini", "Python", "rag_few_shot"),
+    #     ("dataset/samples/evaluation_results/py_evaluation_results_gpt-4o_rag_few_shot.csv", "GPT-4o", "Python", "rag_few_shot"),
+
+    #     # JS
+    #     ("dataset/samples/evaluation_results/js_evaluation_results_gemini-2.0-flash_rag_few_shot.csv", "Gemini 2.0 Flash", "JavaScript", "rag_few_shot"),
+
+    #     ("dataset/samples/evaluation_results/js_evaluation_results_gpt-3.5-turbo_rag_few_shot.csv", "GPT-3.5 Turbo", "JavaScript", "rag_few_shot"),
+    #     ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4.1-mini_rag_few_shot.csv", "GPT-4.1 Mini", "JavaScript", "rag_few_shot"),
+    #     ("dataset/samples/evaluation_results/js_evaluation_results_gpt-4o_rag_few_shot.csv", "GPT-4o", "JavaScript", "rag_few_shot"),
+
+    #     # PHP
+    #     ("dataset/samples/evaluation_results/php_evaluation_results_gemini-2.0-flash_rag_few_shot.csv", "Gemini 2.0 Flash", "PHP", "rag_few_shot"),
+
+    #     ("dataset/samples/evaluation_results/php_evaluation_results_gpt-3.5-turbo_rag_few_shot.csv", "GPT-3.5 Turbo", "PHP", "rag_few_shot"),
+    #     ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4.1-mini_rag_few_shot.csv", "GPT-4.1 Mini", "PHP", "rag_few_shot"),
+    #     ("dataset/samples/evaluation_results/php_evaluation_results_gpt-4o_rag_few_shot.csv", "GPT-4o", "PHP", "rag_few_shot"),
+    # ]
+
+    
+
+
+    # results_list = []
+    # for input_path, model_name, language, prompt_name in evaluations:
+    #     # Evaluate model performance
+    #     evaluate_model_performance(input_path, model_name, language, prompt_name, results_list)
+
+    # # Save results to CSV
+    # results_df = pd.DataFrame(results_list)
+    # output_csv_path = "dataset/samples/evaluation_results/summary_rag_results.csv"
+    # results_df.to_csv(output_csv_path, index=False)
+    # print(f"Results saved to {output_csv_path}")
+
 
 
 

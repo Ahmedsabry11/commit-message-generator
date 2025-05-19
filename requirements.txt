@@ -1,16 +1,19 @@
 openai
 python-dotenv
-requests
-langchain
-tiktoken # for token counting
-google-generative-ai # for Google Gemini API
-evaluate
-rouge_score
-bert-score
-faiss-cpu 
-langchain 
-openai 
-tiktoken
+# requests
+# langchain
+# tiktoken # for token counting
+# evaluate
+# rouge_score
+# bert-score
+# langchain 
+# openai 
+# tiktoken
+# matplotlib
+# seaborn
+
+numpy==1.24.4
 pandas
-matplotlib
-seaborn
+# faiss-cpu
+faiss-gpu
+sentence-transformers

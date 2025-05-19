@@ -1,0 +1,853 @@
+diff,expected_message,prompt_style,inference_message
+"diff --git a/src/Illuminate/Mail/Mailer.php b/src/Illuminate/Mail/Mailer.php
+index <HASH>..<HASH> 100755
+--- a/src/Illuminate/Mail/Mailer.php
++++ b/src/Illuminate/Mail/Mailer.php
+@@ -61,6 +61,13 @@ class Mailer {
+ 	protected $failedRecipients = array();
+ 
+ 	/**
++	 * The QueueManager instance.
++	 *
++	 * @var \Illuminate\Queue\QueueManager
++	 */
++	protected $queue;
++
++	/**
+ 	 * Create a new Mailer instance.
+ 	 *
+ 	 * @param  \Illuminate\View\Environment  $views","Update Mailer.php
+
+added missing class property",rag_few_shot,Add QueueManager property to Mailer class in Mailer.php
+"diff --git a/src/None.php b/src/None.php
+index <HASH>..<HASH> 100644
+--- a/src/None.php
++++ b/src/None.php
+@@ -36,6 +36,10 @@ class None extends Maybe
+      */
+     public function get(callable $codeBlock = null)
+     {
++        if (is_callable($codeBlock)) {
++            return $codeBlock(null);
++        }
++
+         return null;
+     }
+ }",added callback support to None monad,rag_few_shot,add callback execution support to None::get method
+"diff --git a/extensions/bootstrap/ActiveField.php b/extensions/bootstrap/ActiveField.php
+index <HASH>..<HASH> 100644
+--- a/extensions/bootstrap/ActiveField.php
++++ b/extensions/bootstrap/ActiveField.php
+@@ -153,7 +153,7 @@ class ActiveField extends \yii\widgets\ActiveField
+     {
+         $layoutConfig = $this->createLayoutConfig($config);
+         $config = ArrayHelper::merge($layoutConfig, $config);
+-        return parent::__construct($config);
++        parent::__construct($config);
+     }
+ 
+     /**",No need to return from __construct,rag_few_shot,No need to return from __construct in ActiveField class
+"diff --git a/includes/managers/class-fs-key-value-storage.php b/includes/managers/class-fs-key-value-storage.php
+index <HASH>..<HASH> 100755
+--- a/includes/managers/class-fs-key-value-storage.php
++++ b/includes/managers/class-fs-key-value-storage.php
+@@ -263,6 +263,16 @@
+ 				$default;
+ 		}
+ 
++        /**
++         * @author Vova Feldman (@svovaf)
++         * @since  1.2.4
++         *
++         * @return string
++         */
++		function get_secondary_id() {
++            return $this->_secondary_id;
++        }
++
+ 
+ 		/* ArrayAccess + Magic Access (better for refactoring)
+         -----------------------------------------------------------------------------------*/",[multisite] [key-value-storage] Expose the secondary ID as a public method.,rag_few_shot,[multisite] [key-value-storage] Add method to retrieve the secondary ID.
+"diff --git a/lang/en/message.php b/lang/en/message.php
+index <HASH>..<HASH> 100644
+--- a/lang/en/message.php
++++ b/lang/en/message.php
+@@ -52,6 +52,7 @@ $string['errorcallingprocessor'] = 'Error calling defined processor';
+ $string['formorethan'] = 'For more than';
+ $string['guestnoeditmessage'] = 'Guest user can not edit messaging options';
+ $string['guestnoeditmessageother'] = 'Guest user can not edit other user messaging options';
++$string['gotomessages'] = 'Go to messages';
+ $string['includeblockedusers'] = 'Include blocked users';
+ $string['incomingcontacts'] = 'Incoming contacts ({$a})';
+ $string['keywords'] = 'Keywords';",messaging MDL-<I> added a new string,rag_few_shot,messaging MDL-<I> added 'Go to messages' string
+"diff --git a/concrete/blocks/date_navigation/controller.php b/concrete/blocks/date_navigation/controller.php
+index <HASH>..<HASH> 100644
+--- a/concrete/blocks/date_navigation/controller.php
++++ b/concrete/blocks/date_navigation/controller.php
+@@ -112,6 +112,13 @@ class Controller extends BlockController
+ 
+     public function save($data)
+     {
++        $data += [
++            'redirectToResults' => 0,
++            'cTargetID' => 0,
++            'filterByParent' => 0,
++            'cParentID' => 0,
++            'ptID' => 0,
++        ];
+         if ($data['redirectToResults']) {
+             $data['cTargetID'] = intval($data['cTargetID']);
+         } else {",Avoid accessing undefined array indexes in date_navigation block controller,rag_few_shot,Ensure default values are set to prevent undefined array indexes in date_navigation block controller
+"diff --git a/src/BittrexAPI.php b/src/BittrexAPI.php
+index <HASH>..<HASH> 100644
+--- a/src/BittrexAPI.php
++++ b/src/BittrexAPI.php
+@@ -106,6 +106,18 @@ class BittrexAPI
+     public function getMarkets() {
+
+         return $this->publicRequest('getmarkets');
+
+     }
+
++
+
++
+
++    /**
+
++     * Used to retrieve the latest trades that have occurred for a specific market.
+
++     *
+
++     * @return array
+
++     */
+
++    public function getMarketHistory($market) {
+
++        return $this->publicRequest('getmarkethistory', [
+
++            'market' => $market
+
++        ]);
+
++    }","add getmarkethistory
+
+- Reason(s):
+
+- Change(s):
+  - BittrexAPI.php
+
+- Reference(s):
+  - <URL>",rag_few_shot,add getMarketHistory method to retrieve latest trades for a specific market
+"diff --git a/src/Jobby/BackgroundJob.php b/src/Jobby/BackgroundJob.php
+index <HASH>..<HASH> 100644
+--- a/src/Jobby/BackgroundJob.php
++++ b/src/Jobby/BackgroundJob.php
+@@ -208,8 +208,14 @@ class BackgroundJob
+      */
+     protected function isFunction()
+     {
++        $isSerialized = ($str == serialize(false) || @unserialize($str) !== false);
++        
++        if (!$isSerialized) {
++            return false;
++        }
++        
+         $cmd = unserialize($this->config['command']);
+-        return !is_null($cmd) && $cmd instanceof SerializableClosure;
++        return is_object($cmd) && $cmd instanceof SerializableClosure;
+     }
+ 
+     /**","Small fix with isFunction
+
+Forget to see what unserialize returns in case of error (<URL>)",rag_few_shot,Ensure command is serialized before unserializing in isFunction method
+"diff --git a/lang/en_utf8/grades.php b/lang/en_utf8/grades.php
+index <HASH>..<HASH> 100644
+--- a/lang/en_utf8/grades.php
++++ b/lang/en_utf8/grades.php
+@@ -14,7 +14,7 @@ $string['addoutcomeitem'] = 'Add outcome item';
+ $string['aggregateextracreditmean'] = 'Mean of grades (with extra credits)';
+ $string['aggregatemean'] = 'Mean of grades';
+ $string['aggregatemedian'] = 'Median of grades';
+-$string['aggregatemin'] = 'Smallest grade';
++$string['aggregatemin'] = 'Lowest grade';
+ $string['aggregatemax'] = 'Highest grade';
+ $string['aggregatemode'] = 'Mode of grades';
+ $string['aggregateonlygraded'] = 'Aggregate only non-empty grades';",Merged string fix from stable <I>,rag_few_shot,"Merged string update for consistency in language: changed ""Smallest grade"" to ""Lowest grade""."
+"diff --git a/lib/models/datastores/Mysql.php b/lib/models/datastores/Mysql.php
+index <HASH>..<HASH> 100644
+--- a/lib/models/datastores/Mysql.php
++++ b/lib/models/datastores/Mysql.php
+@@ -329,12 +329,12 @@ class Mysql extends SqlDatabase
+     
+     public function begin()
+     {
+-        //self::$db->autocommit(false);
++        $this->query(""START TRANSACTION"");
+     }
+     
+     public function end()
+     {
+-        //self::$db->commit();
++        $this->query(""COMMIT"");
+     }
+ 
+     protected function limit($limitParams)",Put in transaction support for mysql,rag_few_shot,Implement transaction handling using START TRANSACTION and COMMIT in Mysql datastore
+"diff --git a/lib/Rails/Routing/UrlHelpers/UrlHelpers.php b/lib/Rails/Routing/UrlHelpers/UrlHelpers.php
+index <HASH>..<HASH> 100755
+--- a/lib/Rails/Routing/UrlHelpers/UrlHelpers.php
++++ b/lib/Rails/Routing/UrlHelpers/UrlHelpers.php
+@@ -138,7 +138,7 @@ class UrlHelpers
+                 return false;
+             });
+             
+-            if ($index) {
++            if ($index !== false) {
+                 $route = $this->router()->routes()->routes()->offsetGet($index);
+                 if ($model) {
+                     $params = $this->extract_route_vars_from_model($route, $model);",fixed evaluating index 0 as false,rag_few_shot,fix index comparison to correctly handle zero values in UrlHelpers
+"diff --git a/concrete/src/Editor/CkeditorEditor.php b/concrete/src/Editor/CkeditorEditor.php
+index <HASH>..<HASH> 100644
+--- a/concrete/src/Editor/CkeditorEditor.php
++++ b/concrete/src/Editor/CkeditorEditor.php
+@@ -335,8 +335,7 @@ EOL;
+      */
+     public function requireEditorAssets()
+     {
+-        $this->assets->requireAsset('core/file-manager');
+-        $this->assets->requireAsset('editor/ckeditor4');
++        $this->assets->requireAsset('ckeditor');
+ 
+         $plugins = $this->pluginManager->getSelectedPluginObjects();",Making CKEditor work again in <I> branch,rag_few_shot,Fix CKEditor asset requirement to use 'ckeditor' instead of 'editor/ckeditor4' and 'core/file-manager'
+"diff --git a/Tests/Functional/Configuration/PageFinderTest.php b/Tests/Functional/Configuration/PageFinderTest.php
+index <HASH>..<HASH> 100644
+--- a/Tests/Functional/Configuration/PageFinderTest.php
++++ b/Tests/Functional/Configuration/PageFinderTest.php
+@@ -19,12 +19,12 @@ class PageFinderTest extends FunctionalTestCase
+     /**
+      * @var \Tx_Oelib_TestingFramework
+      */
+-    private $testingFramework;
++    private $testingFramework = null;
+ 
+     /**
+      * @var \Tx_Oelib_PageFinder
+      */
+-    private $subject;
++    private $subject = null;
+ 
+     protected function setUp()
+     {","[CLEANUP] Add missing null initializations to the page finder test (#<I>)
+
+[ci skip]",rag_few_shot,[CLEANUP] Initialize private variables to null in PageFinderTest
+"diff --git a/code/dispatcher/response/transport/stream.php b/code/dispatcher/response/transport/stream.php
+index <HASH>..<HASH> 100644
+--- a/code/dispatcher/response/transport/stream.php
++++ b/code/dispatcher/response/transport/stream.php
+@@ -176,7 +176,7 @@ class DispatcherResponseTransportStream extends DispatcherResponseTransportHttp
+      */
+     public function sendContent(DispatcherResponseInterface $response)
+     {
+-        if ($response->isSuccess())
++        if ($response->isSuccess() && $response->isStreamable())
+         {
+             //For a certain unmentionable browser
+             if(ini_get('zlib.output_compression')) {",#<I>: Make sure response is streamable first,rag_few_shot,Ensure response is streamable before sending content
+"diff --git a/app/SymfonyRequirements.php b/app/SymfonyRequirements.php
+index <HASH>..<HASH> 100644
+--- a/app/SymfonyRequirements.php
++++ b/app/SymfonyRequirements.php
+@@ -678,7 +678,7 @@ class SymfonyRequirements extends RequirementCollection
+         if (class_exists('PDO')) {
+             $drivers = PDO::getAvailableDrivers();
+             $this->addRecommendation(
+-                count($drivers),
++                count($drivers) > 0,
+                 sprintf('PDO should have some drivers installed (currently available: %s)', count($drivers) ? implode(', ', $drivers) : 'none'),
+                 'Install <strong>PDO drivers</strong> (mandatory for Doctrine).'
+             );",Fixed tiny Scrutinizer-CI issue - already merged the fix upstream.,rag_few_shot,Fixed PDO driver requirement to ensure boolean evaluation for driver count check.
+"diff --git a/Server.php b/Server.php
+index <HASH>..<HASH> 100644
+--- a/Server.php
++++ b/Server.php
+@@ -5,6 +5,7 @@ namespace React\Socket;
+ use Evenement\EventEmitter;
+ use React\EventLoop\LoopInterface;
+ 
++// Events: connection
+ class Server extends EventEmitter implements ServerInterface
+ {
+     public $master;
+diff --git a/ServerInterface.php b/ServerInterface.php
+index <HASH>..<HASH> 100644
+--- a/ServerInterface.php
++++ b/ServerInterface.php
+@@ -4,6 +4,7 @@ namespace React\Socket;
+ 
+ use Evenement\EventEmitterInterface;
+ 
++// Events: connection
+ interface ServerInterface extends EventEmitterInterface
+ {
+     public function listen($port, $host = '127.0.0.1');",Document events at the top of each EventEmitter class,rag_few_shot,Document connection event in Server and ServerInterface classes
+"diff --git a/page.php b/page.php
+index <HASH>..<HASH> 100755
+--- a/page.php
++++ b/page.php
+@@ -1,6 +1,5 @@
+ <?php
+ /**
+- * Template Name: Blog Archive
+  * Author: Coby Tamayo
+  */
+ 
+@@ -10,4 +9,3 @@ $data = $site->get_context_with_post( new Project\Page() );
+ // Render the default view
+ Timber::render( 'page.twig', $data );
+ 
+-?>
+\ No newline at end of file","let page.php show up as ""Default"" page template",rag_few_shot,"remove ""Template Name: Blog Archive"" from page.php header comments"
+"diff --git a/src/Refinery29.php b/src/Refinery29.php
+index <HASH>..<HASH> 100644
+--- a/src/Refinery29.php
++++ b/src/Refinery29.php
+@@ -9,7 +9,7 @@
+ 
+ namespace Refinery29\CS\Config;
+ 
+-use Symfony\CS\Config;
++use PhpCsFixer\Config;
+ 
+ class Refinery29 extends Config
+ {
+diff --git a/test/Refinery29Test.php b/test/Refinery29Test.php
+index <HASH>..<HASH> 100644
+--- a/test/Refinery29Test.php
++++ b/test/Refinery29Test.php
+@@ -9,8 +9,8 @@
+ 
+ namespace Refinery29\CS\Config\Test;
+ 
++use PhpCsFixer\ConfigInterface;
+ use Refinery29\CS\Config\Refinery29;
+-use Symfony\CS\ConfigInterface;
+ 
+ class Refinery29Test extends \PHPUnit_Framework_TestCase
+ {",Fix: Namespace Symfony\CS has been renamed to PhpCsFixer,rag_few_shot,Fix: Update namespace from Symfony\CS to PhpCsFixer in Refinery29 files
+"diff --git a/test/classes/phing/system/FileOutputStreamTest.php b/test/classes/phing/system/FileOutputStreamTest.php
+index <HASH>..<HASH> 100644
+--- a/test/classes/phing/system/FileOutputStreamTest.php
++++ b/test/classes/phing/system/FileOutputStreamTest.php
+@@ -43,7 +43,7 @@ class FileOutputStreamTest extends PHPUnit_Framework_TestCase {
+     }
+     
+     public function tearDown() {
+-    	FileSystem::unlink($this->tmpFile->getAbsolutePath());
++    	FileSystem::getFileSystem()->unlink($this->tmpFile->getAbsolutePath());
+     }
+     
+     public function assertFileContents($contents)",unlink() shouldn't be used static,rag_few_shot,Refactor tearDown method to use non-static unlink call
+"diff --git a/src/Entity/DateRangeNoPropTrait.php b/src/Entity/DateRangeNoPropTrait.php
+index <HASH>..<HASH> 100644
+--- a/src/Entity/DateRangeNoPropTrait.php
++++ b/src/Entity/DateRangeNoPropTrait.php
+@@ -62,8 +62,16 @@ trait DateRangeNoPropTrait
+      */
+     public function setEndDate(\DateTime $date = null)
+     {
+-        $this->endDate = $date ?: new \DateTime('1900-01-01 00:00:00');
++        $this->endDate = $date ?: new \DateTime($this->getDefaultDate());
+ 
+         return $this;
+     }
++
++    /**
++     * @return \DateTime
++     */
++    public function getDefaultDate()
++    {
++        return new \DateTime();
++    }
+ }",Allow date range default date to be set by child class,rag_few_shot,Refactor setEndDate to use getDefaultDate method for default date initialization
+"diff --git a/Tests/ContainerTest.php b/Tests/ContainerTest.php
+index <HASH>..<HASH> 100644
+--- a/Tests/ContainerTest.php
++++ b/Tests/ContainerTest.php
+@@ -54,6 +54,20 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
+ 	}
+ 
+ 	/**
++	 * Tests the constructor.
++	 *
++	 * @return  void
++	 *
++	 * @since   1.0
++	 */
++	public function testConstructorWithConfig()
++	{
++		$this->fixture = new Container(array('foo' => 'bar'));
++
++		$this->assertAttributeEquals(array('default.shared' => true, 'foo' => 'bar'), 'config', $this->fixture);
++	}
++
++	/**
+ 	 * Tests the set method with bad callback.
+ 	 *
+ 	 * @return  void",One more test for the constructor. I'm done this time. I swear.,rag_few_shot,Add test for Container constructor with configuration array
+"diff --git a/ext_emconf.php b/ext_emconf.php
+index <HASH>..<HASH> 100644
+--- a/ext_emconf.php
++++ b/ext_emconf.php
+@@ -13,7 +13,7 @@ $EM_CONF[$_EXTKEY] = array(
+     'state' => 'stable',
+     'uploadfolder' => 0,
+     'clearCacheOnLoad' => 0,
+-    'version' => '1.5.7',
++    'version' => '1.6.1',
+     'constraints' => array(
+         'depends' => array(
+             'typo3' => '6.2.0-7.6.99',",[TASK] updated version to <I>,rag_few_shot,[TASK] Update version to 1.6.1
+"diff --git a/modules/admin/src/ngrest/plugins/Textarea.php b/modules/admin/src/ngrest/plugins/Textarea.php
+index <HASH>..<HASH> 100644
+--- a/modules/admin/src/ngrest/plugins/Textarea.php
++++ b/modules/admin/src/ngrest/plugins/Textarea.php
+@@ -76,6 +76,8 @@ class Textarea extends \admin\ngrest\base\Plugin
+             $this->_markdownParser = new GithubMarkdown();
+             $this->_markdownParser->enableNewlines = true;
+         }
++        
++        return $this->_markdownParser;
+     }
+     
+     /**",fixed bug where markdown method does not return the object.,rag_few_shot,fixed bug where markdown method does not return the object in Textarea plugin
+"diff --git a/DependencyInjection/SonataClassificationExtension.php b/DependencyInjection/SonataClassificationExtension.php
+index <HASH>..<HASH> 100644
+--- a/DependencyInjection/SonataClassificationExtension.php
++++ b/DependencyInjection/SonataClassificationExtension.php
+@@ -106,9 +106,8 @@ class SonataClassificationExtension extends Extension
+      */
+     public function registerDoctrineMapping(array $config)
+     {
+-
+         foreach ($config['class'] as $type => $class) {
+-            if (!class_exists($class)) {
++            if ('media' !== $type && !class_exists($class)) {
+                 return;
+             }
+         }",Fixed mapping issue if MediaBundle is not installed,rag_few_shot,Fix mapping issue when MediaBundle is not installed
+"diff --git a/src/Client.php b/src/Client.php
+index <HASH>..<HASH> 100644
+--- a/src/Client.php
++++ b/src/Client.php
+@@ -180,8 +180,8 @@ class Client {
+         $data = array(
+             'eMailAddress' => $this->username,
+             'password' => $this->password,
+-            'locale' => 'fr_CH',
+-            'timeZone' => 'Europe/Zurich',
++            'locale' => $this->locale,
++            'timeZone' => date_default_timezone_get(),
+         );
+         $response = $this->doPost('https://doodle.com/np/mydoodle/logister', $data);",[TASK] Proper timezone and locale,rag_few_shot,[FIX] Use dynamic locale and timezone settings in Client configuration
+"diff --git a/code/controller/context/context.php b/code/controller/context/context.php
+index <HASH>..<HASH> 100644
+--- a/code/controller/context/context.php
++++ b/code/controller/context/context.php
+@@ -16,6 +16,16 @@
+ class KControllerContext extends KCommand implements KControllerContextInterface
+ {
+     /**
++     * Constructor.
++     *
++     * @param  array|\Traversable  $attributes An associative array or a Traversable object instance
++     */
++    public function __construct($attributes = array())
++    {
++        KObjectConfig::__construct($attributes);
++    }
++
++    /**
+      * Get the request object
+      *
+      * @return KControllerRequestInterface",re #<I> - Override ControllerContext constructor to only accept an array of attributes,rag_few_shot,re #<I> - Add constructor to ControllerContext to accept attributes as array or Traversable object
+"diff --git a/RoboFile.php b/RoboFile.php
+index <HASH>..<HASH> 100644
+--- a/RoboFile.php
++++ b/RoboFile.php
+@@ -224,7 +224,7 @@ class RoboFile extends \Robo\Tasks
+     {
+         $this->composerJson = json_decode(file_get_contents('composer.json'), true);
+ 
+-        return new version($composerJson['version'] ?? '0.0.0');
++        return new version($this->composerJson['version'] ?? '0.0.0');
+     }
+ 
+     /**",build(robo): fix issue where retrieved package version was incorrect,rag_few_shot,build(robo): fix incorrect reference to composerJson variable
+"diff --git a/src/Zepi/Turbo/Response/Response.php b/src/Zepi/Turbo/Response/Response.php
+index <HASH>..<HASH> 100644
+--- a/src/Zepi/Turbo/Response/Response.php
++++ b/src/Zepi/Turbo/Response/Response.php
+@@ -250,7 +250,7 @@ class Response
+             return;
+         }
+         
+-        if (strpos($target, 'http://') === false) {
++        if (!preg_match('/http(s?)\:\/\//', $target)) {
+             $target = $this->request->getFullRoute($target);
+         }",Replaced a protocol check with a regular expression check,rag_few_shot,Use regex to check for both http and https protocols in target URL
+"diff --git a/src/ConsoleApplication.php b/src/ConsoleApplication.php
+index <HASH>..<HASH> 100644
+--- a/src/ConsoleApplication.php
++++ b/src/ConsoleApplication.php
+@@ -8,7 +8,7 @@ class ConsoleApplication extends Application
+ {
+     public function __construct()
+     {
+-        parent::__construct('PHPUnit Watcher', '1.3.6');
++        parent::__construct('PHPUnit Watcher', '1.5.0');
+ 
+         $this->add(new WatcherCommand());
+     }",Updated program version string (#<I>),rag_few_shot,Update program version to 1.5.0 (#<I>)
+"diff --git a/src/ServiceProvider/ConfigServiceProvider.php b/src/ServiceProvider/ConfigServiceProvider.php
+index <HASH>..<HASH> 100644
+--- a/src/ServiceProvider/ConfigServiceProvider.php
++++ b/src/ServiceProvider/ConfigServiceProvider.php
+@@ -68,6 +68,6 @@ class ConfigServiceProvider
+      */
+     private function getParser(string $extension): ParserInterface
+     {
+-        return $extension === 'yml' ? new YamlParser() : new JsonParser();
++        return $extension === 'json' ? new JsonParser() : new YamlParser();
+     }
+ }",fix bug with yaml support,rag_few_shot,fix parser selection logic for config files based on extension
+"diff --git a/src/PHPMailer.php b/src/PHPMailer.php
+index <HASH>..<HASH> 100644
+--- a/src/PHPMailer.php
++++ b/src/PHPMailer.php
+@@ -4105,12 +4105,12 @@ class PHPMailer
+             //Is it a valid IPv4 address?
+             return filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
+         }
+-        if (filter_var('http://' . $host, FILTER_VALIDATE_URL) !== false) {
++        return (bool) (filter_var('http://' . $host, FILTER_VALIDATE_URL) !== false) 
+             //Is it a syntactically valid hostname?
+-            return true;
+-        }
++             
++        
+ 
+-        return false;
++         ;
+     }
+ 
+     /**","simplified if return
+
+Simplify if control structures that return the boolean result of their condition.",rag_few_shot,Simplify boolean return logic in isValidHost method.
+"diff --git a/src/Email/MemberConfirmationEmail.php b/src/Email/MemberConfirmationEmail.php
+index <HASH>..<HASH> 100644
+--- a/src/Email/MemberConfirmationEmail.php
++++ b/src/Email/MemberConfirmationEmail.php
+@@ -155,8 +155,7 @@ class MemberConfirmationEmail extends Email
+                 singleton(Security::class)->Link('login')
+             ),
+             '$ConfirmLink'    => Controller::join_links(
+-                $absoluteBaseURL,
+-                $page->Link('confirm'),
++                $this->page->AbsoluteLink('confirm'),
+                 $member->ID,
+                 ""?key={$member->ValidationKey}""
+             ),","FIX: Duplicating email confirmation link (#<I>)
+
+This is the same as <URL>",rag_few_shot,FIX: Use AbsoluteLink for confirmation link generation in MemberConfirmationEmail
+"diff --git a/utils/make-phar.php b/utils/make-phar.php
+index <HASH>..<HASH> 100644
+--- a/utils/make-phar.php
++++ b/utils/make-phar.php
+@@ -97,6 +97,7 @@ foreach ( $finder as $file ) {
+ }
+ 
+ add_file( $phar, WP_CLI_ROOT . '/vendor/autoload.php' );
++add_file( $phar, WP_CLI_ROOT . '/ci/behat-tags.php' );
+ add_file( $phar, WP_CLI_ROOT . '/utils/get-package-require-from-composer.php' );
+ add_file( $phar, WP_CLI_ROOT . '/vendor/rmccue/requests/library/Requests/Transport/cacert.pem' );",Make sure to include `behat-tags.php` in the Phar build,rag_few_shot,Add `behat-tags.php` to the Phar build process
+"diff --git a/src/Symfony/Component/Console/Tests/Helper/ProcessHelperTest.php b/src/Symfony/Component/Console/Tests/Helper/ProcessHelperTest.php
+index <HASH>..<HASH> 100644
+--- a/src/Symfony/Component/Console/Tests/Helper/ProcessHelperTest.php
++++ b/src/Symfony/Component/Console/Tests/Helper/ProcessHelperTest.php
+@@ -78,6 +78,9 @@ EOT;
+ EOT;
+ 
+         $errorMessage = 'An error occurred';
++        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
++            $successOutputProcessDebug = str_replace(""'"", '""', $successOutputProcessDebug);
++        }
+ 
+         return array(
+             array('', 'php -r ""echo 42;""', StreamOutput::VERBOSITY_VERBOSE, null),",[Console] Fix test on windows,rag_few_shot,[Console] Fix ProcessHelperTest for Windows compatibility
+"diff --git a/tests/Cache/ApcCacheTest.php b/tests/Cache/ApcCacheTest.php
+index <HASH>..<HASH> 100644
+--- a/tests/Cache/ApcCacheTest.php
++++ b/tests/Cache/ApcCacheTest.php
+@@ -30,4 +30,9 @@ class ApcCacheTest extends AbstractCacheTest
+ 
+         return $cache;
+     }
++
++    public function testCacheTtl()
++    {
++        $this->markTestSkipped(""APC will only expunged its cache on the next request"");
++    }
+ }
+\ No newline at end of file",skip ttl test on APC test case cause APC will only expunged its cache on the next request,rag_few_shot,Skip testCacheTtl in ApcCacheTest due to APC cache expunging behavior on next request.
+"diff --git a/src/Services/Issues.php b/src/Services/Issues.php
+index <HASH>..<HASH> 100644
+--- a/src/Services/Issues.php
++++ b/src/Services/Issues.php
+@@ -3,6 +3,7 @@
+ namespace TZK\Taiga\Services;
+ 
+ 
++use TZK\Taiga\RestClient;
+ use TZK\Taiga\Service;
+ 
+ class Issues extends Service {
+@@ -13,11 +14,11 @@ class Issues extends Service {
+      *
+      * @param RestClient $root
+      */
+-    public function __construct($root) {
++    public function __construct(RestClient $root) {
+         parent::__construct($root, 'issues');
+     }
+ 
+-    public function getAll(array $param = []) {
++    public function getList(array $param = []) {
+         return $this->get(null, $param);
+     }","Renaming getAll method to getList
+
+Aim is to remain coherent with the rest of the services",rag_few_shot,Refactor Issues service: type-hint RestClient in constructor and rename getAll to getList for consistency
+"diff --git a/lib/custom/config/mshop/customer.php b/lib/custom/config/mshop/customer.php
+index <HASH>..<HASH> 100644
+--- a/lib/custom/config/mshop/customer.php
++++ b/lib/custom/config/mshop/customer.php
+@@ -316,7 +316,7 @@ return array(
+ 						fos.""birthday"" AS ""customer.birthday"", fos.""enabled"" AS ""customer.status"",
+ 						fos.""vdate"" AS ""customer.vdate"", fos.""password"" AS ""customer.password"",
+ 						fos.""ctime"" AS ""customer.ctime"", fos.""mtime"" AS ""customer.mtime"",
+-						fos.""editor"" AS ""customer.editor"", fos.""roles"", fos.""salt"", fos.*
++						fos.""editor"" AS ""customer.editor"", fos.""roles"", fos.""salt""
+ 					FROM ""fos_user"" AS fos
+ 					:joins
+ 					WHERE :cond",Don't add all fields twice by default,rag_few_shot,Don't add all fields twice by default
+"diff --git a/code/libraries/koowa/controller/behavior/discoverable.php b/code/libraries/koowa/controller/behavior/discoverable.php
+index <HASH>..<HASH> 100644
+--- a/code/libraries/koowa/controller/behavior/discoverable.php
++++ b/code/libraries/koowa/controller/behavior/discoverable.php
+@@ -68,7 +68,7 @@ class KControllerBehaviorDiscoverable extends KControllerBehaviorAbstract
+         
+         foreach($methods as $method => $actions) 
+         {
+-           if(is_array($actions)) {
++           if(is_array($actions) && !empty($actions)) {
+                $result = str_replace($method, $method.' ['.implode(', ', $actions).']', $result);
+            }     
+         }",Don't return an list of actions if no actions are defined.,rag_few_shot,Ensure actions array is not empty before processing in KControllerBehaviorDiscoverable.
+"diff --git a/src/Form/Field/Image.php b/src/Form/Field/Image.php
+index <HASH>..<HASH> 100644
+--- a/src/Form/Field/Image.php
++++ b/src/Form/Field/Image.php
+@@ -45,4 +45,17 @@ class Image extends File
+ 
+         return $path;
+     }
++
++    /**
++     * force file type to image
++     * @param $file
++     * @return array|bool|int[]|string[]
++     */
++    public function guessPreviewType($file)
++    {
++        $extra = parent::guessPreviewType($file);
++        $extra['type'] = 'image';
++
++        return $extra;
++    }
+ }",force file type to image with Image field,rag_few_shot,Add method to force preview type to image in Image field
+"diff --git a/src/Form/Control.php b/src/Form/Control.php
+index <HASH>..<HASH> 100644
+--- a/src/Form/Control.php
++++ b/src/Form/Control.php
+@@ -4,6 +4,8 @@ declare(strict_types=1);
+ 
+ namespace Atk4\Ui\Form;
+ 
++use Atk4\Data\Field;
++use Atk4\Data\Model;
+ use Atk4\Data\Model\EntityFieldPair;
+ use Atk4\Ui\Exception;
+ use Atk4\Ui\Form;
+@@ -19,9 +21,7 @@ class Control extends View
+      */
+     public $form;
+ 
+-    /**
+-     * @var EntityFieldPair
+-     */
++    /** @var EntityFieldPair<Model, Field> */
+     public $entityField;
+ 
+     /** @var string */",Adjust to EntityFieldPair generics for Phpstan (#<I>),rag_few_shot,Refine EntityFieldPair type annotation with generics for Phpstan compatibility
+"diff --git a/src/Message/RapidResponse.php b/src/Message/RapidResponse.php
+index <HASH>..<HASH> 100644
+--- a/src/Message/RapidResponse.php
++++ b/src/Message/RapidResponse.php
+@@ -52,4 +52,12 @@ class RapidResponse extends AbstractResponse implements RedirectResponseInterfac
+ 
+         return null;
+     }
++
++    /**
++     * Get InvoiceNumber - merchant reference for a transaction
++     */
++    public function getInvoiceNumber()
++    {
++        return $this->data['InvoiceNumber'];
++    }
+ }",Add getInvoiceNumber for merchant's reference of a particular transaction.,rag_few_shot,Add getInvoiceNumber method to RapidResponse for accessing merchant transaction reference.
+"diff --git a/src/ExpandedSingles.php b/src/ExpandedSingles.php
+index <HASH>..<HASH> 100755
+--- a/src/ExpandedSingles.php
++++ b/src/ExpandedSingles.php
+@@ -45,11 +45,12 @@ class ExpandedSingles extends Plugin
+ 
+         $this->_registerComponents();
+         $this->_registerLogTarget();
+-        $this->_registerCpRoutes();
+ 
+         if (!Craft::$app->getRequest()->getIsCpRequest()) {
+             return;
+         }
++        
++        $this->_registerCpRoutes();
+ 
+         // Modified the entry index sources
+         Event::on(Entry::class, Element::EVENT_REGISTER_SOURCES, function(RegisterElementSourcesEvent $event) {",Add checks for registering events for performance,rag_few_shot,Delay CP route registration until after CP request check
+"diff --git a/src/Storage/RecordModifier.php b/src/Storage/RecordModifier.php
+index <HASH>..<HASH> 100644
+--- a/src/Storage/RecordModifier.php
++++ b/src/Storage/RecordModifier.php
+@@ -394,7 +394,7 @@ class RecordModifier
+         // Test write access for uploadable fields.
+         $contenttype['fields'] = $this->setCanUpload($contenttype['fields']);
+         if ($templatefields = $content->getTemplatefields()) {
+-            $content->setTemplatefields($this->setCanUpload($templatefields));
++            $this->setCanUpload($templatefields->getContenttype());
+         }
+ 
+         // Build context for Twig.",pass by reference to setCanUpload,rag_few_shot,Fix template fields upload permission check in RecordModifier
+"diff --git a/parts/IndexFindersPart.php b/parts/IndexFindersPart.php
+index <HASH>..<HASH> 100644
+--- a/parts/IndexFindersPart.php
++++ b/parts/IndexFindersPart.php
+@@ -10,6 +10,9 @@
+ namespace phootwork\lang\parts;
+ 
+ trait IndexFindersPart {
++	abstract public function find(...$arguments);
++
++	abstract public function findLast(...$arguments);
+ 
+ 	/**
+ 	 * Returns the index of the given element or false if the element can't be found
+@@ -21,7 +24,7 @@ trait IndexFindersPart {
+ 	public function indexOf($element): ?int {
+ 		$out = array_search($element, $this->array, true);
+ 
+-		return false === $out ? null : $out;
++		return false === $out ? null : (int) $out;
+ 	}
+ 
+ 	/**",Fix a bug discovered by Scrutinizer,rag_few_shot,Fix type casting issue in indexOf method and add abstract methods find and findLast
+"diff --git a/Twig/Extension/MediaExtension.php b/Twig/Extension/MediaExtension.php
+index <HASH>..<HASH> 100644
+--- a/Twig/Extension/MediaExtension.php
++++ b/Twig/Extension/MediaExtension.php
+@@ -18,7 +18,7 @@ use Sonata\MediaBundle\Twig\TokenParser\MediaTokenParser;
+ use Sonata\MediaBundle\Twig\TokenParser\PathTokenParser;
+ use Sonata\MediaBundle\Twig\TokenParser\ThumbnailTokenParser;
+ 
+-class MediaExtension extends \Twig_Extension
++class MediaExtension extends \Twig_Extension implements \Twig_Extension_InitRuntimeInterface
+ {
+     /**
+      * @var Pool",fix depreaction notices with twig env,rag_few_shot,Implement InitRuntimeInterface to address Twig deprecation warnings
+"diff --git a/lib/Doctrine/DBAL/Version.php b/lib/Doctrine/DBAL/Version.php
+index <HASH>..<HASH> 100644
+--- a/lib/Doctrine/DBAL/Version.php
++++ b/lib/Doctrine/DBAL/Version.php
+@@ -36,7 +36,7 @@ class Version
+     /**
+      * Current Doctrine Version
+      */
+-    const VERSION = '2.0.0-DEV';
++    const VERSION = '2.1.0-DEV';
+ 
+     /**
+      * Compares a Doctrine version with the current one.",Bump Dev Version to <I>,rag_few_shot,Bump Dev Version to 2.1.0-DEV
+"diff --git a/src/CfdiUtils/CfdiCreator33.php b/src/CfdiUtils/CfdiCreator33.php
+index <HASH>..<HASH> 100644
+--- a/src/CfdiUtils/CfdiCreator33.php
++++ b/src/CfdiUtils/CfdiCreator33.php
+@@ -117,6 +117,9 @@ class CfdiCreator33
+         );
+     }
+ 
++    /**
++     * @return Asserts|\CfdiUtils\Validate\Assert[]
++     */
+     public function validate(): Asserts
+     {
+         $asserts = new Asserts();",Add Asserts[] as return type of validate to enable code completition,rag_few_shot,Add return type annotation for validate method in CfdiCreator33 class to improve code completion
+"diff --git a/dev/SapphireTest.php b/dev/SapphireTest.php
+index <HASH>..<HASH> 100644
+--- a/dev/SapphireTest.php
++++ b/dev/SapphireTest.php
+@@ -425,7 +425,7 @@ class SapphireTest extends PHPUnit_Framework_TestCase {
+ 		$fixtureContent = $parser->load(Director::baseFolder().'/'.$fixtureFile);
+ 		
+ 		$fixture = new YamlFixture($fixtureFile);
+-		$fixture->saveIntoDatabase();
++		$fixture->saveIntoDatabase($this->model);
+ 		$this->fixtures[] = $fixture;
+ 	}",BUGFIX: Fix loading of fixtures not specified in $fixtures array,rag_few_shot,BUGFIX: Pass model to saveIntoDatabase to ensure fixtures are loaded correctly
+"diff --git a/tests/BaseWrapperTest.php b/tests/BaseWrapperTest.php
+index <HASH>..<HASH> 100644
+--- a/tests/BaseWrapperTest.php
++++ b/tests/BaseWrapperTest.php
+@@ -27,7 +27,7 @@ abstract class BaseWrapperTest extends TestCase
+             [
+                 '~\w+, \d+ \w+ \w+ \d+:\d+:\d+ \+\d+~',
+                 '~([_<])\w{32}([@""\n-])~',
+-                '<boundarydelimiter@[^>]+>'
++                '~<boundarydelimiter@[^>]+>~'
+             ],
+             [
+                 'xxx, dd, yyyy hh:mi:ss +ffff',",Erros in expression regular in test.,rag_few_shot,Fix regex pattern in BaseWrapperTest for boundary delimiter
+"diff --git a/src/Connector/soapConnector.php b/src/Connector/soapConnector.php
+index <HASH>..<HASH> 100644
+--- a/src/Connector/soapConnector.php
++++ b/src/Connector/soapConnector.php
+@@ -2,8 +2,7 @@
+ 
+ namespace RoyalMail\Connector;
+ 
+-ini_set(""soap.wsdl_cache_enabled"",""1""); # Save a bit of network traffic and delay by caching the WSDL file.
+-                                        # TODO: Check whether the cache is going to need clearing when updating to new versions of WSDL.
++ini_set(""soap.wsdl_cache_enabled"",""0""); # This may cause issues with PHP version changes: http://lornajane.net/posts/2015/soapfault-when-switching-php-versions
+ 
+ 
+ class soapConnector extends baseConnector {","Remove wsdl caching as it can cause errors with PHP version changes:
+
+<URL>",rag_few_shot,Disable WSDL caching to prevent issues with PHP version changes.
