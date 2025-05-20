@@ -1,0 +1,96 @@
+
+\begin{table*}[t]
+\centering
+\caption{Comparison of model-generated messages vs. gold reference for a diff-only input.}
+\label{tab:diff-vs-gold-models}
+\renewcommand{\arraystretch}{1.3}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Reference Message} & 
+Make sure that mousing over Chrome "internal div" elements results in no trigger of a mouseleave. Fixes \#\textless I\textgreater. \\
+\hline
+\textbf{Gemini 2.0 (Feature Prompt)} & 
+Fixes a bug where \texttt{relatedTarget} could cause an error or incorrect event type in Firefox and Chrome. \\
+\hline
+\textbf{Gemini 2.0 (Zero-Shot)} & 
+Fix a bug where \texttt{relatedTarget} could be assigned a XUL element or null parentNode in Firefox and Chrome, causing an error. \\
+\hline
+\textbf{Gemini 2.0 (RAG Few-Shot)} & 
+Fix: Ensure parent exists before accessing parentNode in withinElement \\
+
+\hline
+\textbf{GPT-3.5 Turbo (Feature Prompt)} & 
+Add handling for Chrome relatedTarget parentNode property being null. \\
+\hline
+\textbf{GPT-3.5 Turbo (Zero-Shot)} & 
+Fix issue with \texttt{parentNode} property access in \texttt{event.js}. \\
+\hline
+\textbf{GPT-3.5 Turbo (RAG Few-Shot)} &
+Ensure parent is not null before crawling into its lap to trigger mouseenter on mouseover event. \\
+\hline
+
+\textbf{GPT-4.1 Mini (Feature Prompt)} & 
+Fix \texttt{event.relatedTarget} \texttt{parentNode} check to handle null values in Chrome and Firefox for accurate event type setting. \\
+\hline
+\textbf{GPT-4.1 Mini (Zero-Shot)} & 
+Fix event \texttt{parentNode} traversal to handle null parent in Chrome similar to Firefox XUL elements. \\
+\hline
+\textbf{GPT-4.1 Mini (RAG Few-Shot)} &
+Fix event handling to check parent is non-null before traversal to avoid errors in Chrome and Firefox XUL elements. \\
+\hline
+
+
+\textbf{GPT-4o (Feature Prompt)} & 
+Fix readFile selection logic to correctly handle binary and JSON protocols separately. \\
+\hline
+\textbf{GPT-4o (Zero-Shot)} & 
+Handle null parentNode in Chrome by adding a check before comparing parent with 'this' in withinElement function. \\
+\hline
+\textbf{GPT-4o (RAG Few-Shot)} &
+Ensure parent is not null before checking equality in withinElement function to prevent errors with Chrome's internal elements.\\
+\hline
+
+\end{tabular}
+}
+\end{table*}
+
+
+\begin{table*}[t]
+\centering
+\caption{Comparison of model-generated messages vs. gold reference across prompt styles for the same diff.}
+\label{tab:diff-vs-gold-models}
+\renewcommand{\arraystretch}{1.3}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|p{13cm}|}
+\hline
+\textbf{Source} & \textbf{Commit Message Output} \\
+\hline
+\multicolumn{2}{|c|}{\textbf{Reference Message}} \\
+\hline
+\textbf{Gold Reference} & Make sure that mousing over Chrome "internal div" elements results in no trigger of a mouseleave. Fixes \#\textless I\textgreater. \\
+\hline
+\multicolumn{2}{|c|}{\textbf{Feature Prompt}} \\
+\hline
+Gemini 2.0 & Fixes a bug where \texttt{relatedTarget} could cause an error or incorrect event type in Firefox and Chrome. \\
+GPT-3.5 Turbo & Add handling for Chrome relatedTarget parentNode property being null. \\
+GPT-4.1 Mini & Fix \texttt{event.relatedTarget} \texttt{parentNode} check to handle null values in Chrome and Firefox for accurate event type setting. \\
+GPT-4o & Fix readFile selection logic to correctly handle binary and JSON protocols separately. \\
+\hline
+\multicolumn{2}{|c|}{\textbf{Zero-Shot Prompt}} \\
+\hline
+Gemini 2.0 & Fix a bug where \texttt{relatedTarget} could be assigned a XUL element or null parentNode in Firefox and Chrome, causing an error. \\
+GPT-3.5 Turbo & Fix issue with \texttt{parentNode} property access in \texttt{event.js}. \\
+GPT-4.1 Mini & Fix event \texttt{parentNode} traversal to handle null parent in Chrome similar to Firefox XUL elements. \\
+GPT-4o & Handle null parentNode in Chrome by adding a check before comparing parent with 'this' in withinElement function. \\
+\hline
+\multicolumn{2}{|c|}{\textbf{RAG Few-Shot Prompt (Our Method)}} \\
+\hline
+Gemini 2.0 & Fix: Ensure parent exists before accessing parentNode in withinElement. \\
+GPT-3.5 Turbo & Ensure parent is not null before crawling into its lap to trigger mouseenter on mouseover event. \\
+GPT-4.1 Mini & Fix event handling to check parent is non-null before traversal to avoid errors in Chrome and Firefox XUL elements. \\
+GPT-4o & Ensure parent is not null before checking equality in withinElement function to prevent errors with Chrome's internal elements. \\
+\hline
+\end{tabular}
+}
+\end{table*}

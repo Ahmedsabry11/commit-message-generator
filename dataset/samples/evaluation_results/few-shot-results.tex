@@ -1,0 +1,38 @@
+
+% Results Table
+\begin{table*}[t]
+\centering
+\caption{Evaluation of commit message generation using zero-shot prompts}
+\renewcommand{\arraystretch}{1.3}  % Increases row height
+\label{tab:zero-shot-prompt-results}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Language} & \textbf{Model} & \textbf{BLEU-1} & \textbf{BLEU-2} & \textbf{BLEU-3} & \textbf{BLEU-4} & \textbf{METEOR} & \textbf{ROUGE-1 F1} & \textbf{ROUGE-L F1} & \textbf{BERTScore F1} \\ \hline
+\multirow{4}{*}{Java} 
+& Gemini 2.0 Flash & 17.2 & 7.7 & 4.4 & 2.8 & 15.6 & 20 & 16.9 & 87 \\
+& GPT-3.5 Turbo & 15.7 & 3.4 & 0.1 & 0.1 & 12 & 15.9 & 13.3 & 86.6 \\
+& GPT-4.1 Mini & 16.6 & 5.9 & 2.5 & 1.5 & 15.4 & 20 & 15.7 & 86.2 \\
+& GPT-4o & 15.8 & 5.6 & 2.4 & 1.4 & 14.7 & 18.9 & 15.5 & 86.1 \\
+\hline
+\multirow{4}{*}{Python} 
+& Gemini 2.0 Flash & 13.3 & 5.1 & 2.6 & 0.1 & 9.7 & 16.5 & 13.3 & 84.7 \\
+& GPT-3.5 Turbo & 17.9 & 7.5 & 4.1 & 2.3 & 14 & 25.1 & 19.9 & 86.6 \\
+& GPT-4.1 Mini & 17.6 & 8.5 & 5.2 & 3.2 & 16.6 & 25.7 & 19.5 & 86.5 \\
+& GPT-4o & 17.2 & 9.1 & 5.9 & 3.9 & 17.2 & 25.6 & 20.8 & 86.7 \\
+\hline
+\multirow{4}{*}{JavaScript} 
+& Gemini 2.0 Flash & 3.7 & 1.2 & 0.6 & 0.1 & 3.8 & 5.2 & 3.93 & 83.1 \\
+& GPT-3.5 Turbo & 17.4 & 9.2 & 5.9 & 4.1 & 15.3 & 20.6 & 18.3 & 86.6 \\
+& GPT-4.1 Mini & 15.6 & 7.1 & 4 & 0.1 & 15.8 & 20.5 & 17.9 & 86 \\
+& GPT-4o & 14.3 & 6.8 & 3.6 & 1.6 & 13.8 & 20.4 & 18.5 & 85.9 \\
+\hline
+\multirow{4}{*}{PHP} 
+& Gemini 2.0 Flash & 9.9 & 4 & 1.9 & 1.1 & 9.6 & 13.2 & 10.9 & 84.4 \\
+& GPT-3.5 Turbo & 17.7 & 8.6 & 5.2 & 3.1 & 13.5 & 21.8 & 18.1 & 86.4 \\
+& GPT-4.1 Mini & 14.8 & 7.2 & 4.5 & 2.9 & 16.2 & 22.7 & 19.1 & 85.5 \\
+& GPT-4o & 13.8 & 6.3 & 3.4 & 1.8 & 16 & 20.8 & 17.9 & 85.9 \\
+\hline
+\end{tabular}
+}
+\end{table*}

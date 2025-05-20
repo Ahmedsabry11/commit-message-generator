@@ -1,0 +1,17 @@
+\begin{table}[]
+\centering
+\caption{Baseline results on CommitBench (adapted from Schall et al.~\cite{schall2024commitbench})}
+\renewcommand{\arraystretch}{1.2}
+\label{tab:commit-bench-baseline}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Model} & \textbf{BLEU} & \textbf{METEOR} & \textbf{ROUGE-L F1} \\ \hline
+CommitGen           & 2.3  & 10.3 & 9.4   \\
+NNGen               & 9.6  & 20.5 & 14.6  \\
+T5\textsubscript{small}     & 2.1  & 20.3 & 14.8  \\
+T5\textsubscript{base}      & 4.7  & 25.1 & 20.4  \\
+CodeTrans\textsubscript{small} & 3.3 & 22.9 & 18.7  \\
+CodeTrans\textsubscript{base} & \textbf{5.3} & \textbf{25.9} & \textbf{22.1}  \\
+\hline
+\end{tabular}
+\end{table}
